@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.tp.yogioteur.mapper.AdminMapper">
+
+	<insert id="insertRoom" parameterType="RoomDTO">
+		<selectKey keyProperty="roomNo" resultType="Long" order="BEFORE">
+			SELECT ROOM_SEQ.NEXTVAL
+			  FROM DUAL
+		</selectKey>
+		INSERT INTO ROOM
+			(ROOM_NO, RT_NO, ROOM_NAME, ROOM_STATUS, ROOM_CHECKIN, ROOM_CHECKOUT, ROOM_PRICE)
+		VALUES
+			(#{roomNo}, #{rtNo}, #{roomName}, #{roomStatus}, SYSDATE, #{roomCheckOut}, #{roomPrice})
+	</insert>
+	<insert id="insertImage" parameterType="ImageDTO">
+		INSERT INTO IMAGE
+			(IMAGE_NO, ROOM_NO, IMAGE_PATH, IMAGE_SAVED, IMAGE_ORIGIN)
+		VALUES
+			(IMAGE_SEQ.NEXTVAL, #{roomNo}, #{imagePath}, #{imageSaved}, #{imageOrigin})
+	</insert>
+	
+	<resultMap type="RoomTypeDTO" id="RoomTypeMap">
+		<id column="RT_NO" property="rtNo"/>
+		<result column="RT_TYPE" property="rtType"/>
+		<result column="RT_MAX" property="rtMax"/>
+	</resultMap>
+	
+	<resultMap type="RoomDTO" id="RoomDTOMap">
+		<id column="ROOM_NO" property="roomNo"/>
+		<result column="RT_NO" property="rtNo"/>
+		<result column="ROOM_NAME" property="roomName"/>
+		<result column="ROOM_PRICE" property="roomPrice"/>
+		<result column="ROOM_STATUS" property="roomStatus"/>
+		<result column="ROOM_CHECKIN" property="roomCheckIn"/>
+		<result column="ROOM_CHECKOUT" property="roomCheckOut"/>
+		<collection property="roomTypeDTO" resultMap="RoomTypeMap"/>
+	</resultMap>
+	
+	<select id="selectRoomList" parameterType="Map" resultMap="RoomDTOMap">
+		SELECT A.ROOM_NO, A.RT_NO, A.ROOM_NAME, A.ROOM_STATUS, A.ROOM_CHECKIN, A.ROOM_CHECKOUT, A.ROOM_PRICE, A.RT_TYPE, A.RT_MAX
+	      FROM (SELECT ROW_NUMBER() OVER(ORDER BY R.ROOM_NO DESC) AS ROW_NUM, R.ROOM_NO, R.RT_NO, R.ROOM_NAME, R.ROOM_STATUS, R.ROOM_CHECKIN, R.ROOM_CHECKOUT, R.ROOM_PRICE, T.RT_TYPE, T.RT_MAX
+			      FROM ROOM R INNER JOIN ROOM_TYPE T
+			        ON R.RT_NO = T.RT_NO) A
+	     WHERE A.ROW_NUM BETWEEN #{beginRecord} AND #{endRecord}
+	</select>
+	
+	<select id="selectRoomCount" resultType="Integer">
+		SELECT COUNT(*)
+		  FROM ROOM
+	</select>
+	
+	<select id="selectRoomByNo" parameterType="Long" resultMap="RoomDTOMap">
+		SELECT R.ROOM_NO, R.RT_NO, R.ROOM_NAME, R.ROOM_STATUS, R.ROOM_CHECKIN, R.ROOM_CHECKOUT, R.ROOM_PRICE, T.RT_TYPE, T.RT_MAX
+		  FROM ROOM R INNER JOIN ROOM_TYPE T
+			ON R.RT_NO = T.RT_NO
+		 WHERE R.ROOM_NO = #{roomNo}
+	</select>
+	
+	<select id="selectImageListInTheRoom" parameterType="Long" resultType="ImageDTO">
+		SELECT IMAGE_NO, ROOM_NO, IMAGE_PATH, IMAGE_SAVED, IMAGE_ORIGIN
+		  FROM IMAGE
+		 WHERE ROOM_NO = #{roomNo}
+	</select>
+	
+	<select id="selectImageByNo" parameterType="Long" resultType="ImageDTO">
+		SELECT IMAGE_NO, ROOM_NO, IMAGE_PATH, IMAGE_SAVED, IMAGE_ORIGIN
+		  FROM IMAGE
+		 WHERE IMAGE_NO = #{imageNo}
+	</select>
+	
+	<delete id="deleteRoom" parameterType="Long">
+		DELETE
+		  FROM ROOM
+		 WHERE ROOM_NO = #{roomNo}
+	</delete>
+	
+	<update id="updateRoom" parameterType="RoomDTO" >
+		UPDATE ROOM
+		   SET ROOM_NAME = #{roomName}
+		     , ROOM_PRICE = #{roomPrice}
+		     , RT_NO = #{rtNo}
+		 WHERE ROOM_NO = #{roomNo}
+	</update>
+	
+	<update id="updateImageByNo" parameterType="ImageDTO">
+		UPDATE IMAGE
+		   SET IMAGE_PATH = #{imagePath}
+		     , IMAGE_SAVED = #{imageSaved}
+		     , IMAGE_ORIGIN = #{imageOrigin}
+		 WHERE IMAGE_NO = #{imageNo}
+	</update>
+	
+	
+	<select id="selectMemberList" parameterType="Map" resultType="MemberDTO">
+		SELECT A.MEMBER_NO, A.MEMBER_NAME, A.MEMBER_EMAIL, A.MEMBER_ID, A.MEMBER_PHONE, A.MEMBER_BIRTH, A.SIGN_IN
+		  FROM (SELECT ROW_NUMBER() OVER(ORDER BY MEMBER_NO DESC) AS ROW_NUM, MEMBER_NO, MEMBER_NAME, MEMBER_EMAIL, MEMBER_ID, MEMBER_PHONE, MEMBER_BIRTH, SIGN_IN
+		  	      FROM MEMBER) A
+		  WHERE A.ROW_NUM BETWEEN #{beginRecord} AND #{endRecord}
+	</select>
+	
+	<select id="selectMemberCount" resultType="Integer">
+		SELECT COUNT(*)
+		  FROM MEMBER
+	</select>
+	
+	<select id="selectMemberByNo" parameterType="Long" resultType="MemberDTO">
+		SELECT MEMBER_NO, MEMBER_NAME, MEMBER_EMAIL, MEMBER_ID, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_ROAD_ADDR, SIGN_IN
+		  FROM MEMBER
+		 WHERE MEMBER_NO = #{memberNo}
+	</select>
+	
+	<select id="selectReservationList" resultType="ReservationDTO">
+		SELECT RESER_NO, MEMBER_NO, ROOM_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE
+		  FROM RESERVATION
+		 ORDER BY RESER_NO DESC
+	</select>
+	
+	<select id="selectReservationCount" resultType="Integer">
+		SELECT COUNT(*)
+		  FROM RESERVATION
+	</select>
+	
+	<select id="selectReservationByMemberNo" parameterType="Long" resultType="ReservationDTO">
+		SELECT RESER_NO, MEMBER_NO, ROOM_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE
+		  FROM RESERVATION
+		 WHERE MEMBER_NO = #{memberNo}
+	</select>
+	
+</mapper>
