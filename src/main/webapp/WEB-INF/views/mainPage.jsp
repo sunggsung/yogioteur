@@ -10,6 +10,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link href="https://fonts.googleapis.com/css2?family=Charis+SIL:wght@700&family=Kdam+Thmor+Pro&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="resources/css/footer.css">
  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
 <script src="https://kit.fontawesome.com/148c1051b1.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
@@ -140,11 +141,11 @@
 	$(function(){
 		
 		
-		 $("#checkIn").datepicker({
+		 $("#roomCheckIn").datepicker({
 			 dateFormat: 'yy/mm/dd'
 		    });
 		    
-		 $("#checkOut").datepicker({
+		 $("#roomCheckOut").datepicker({
 			 dateFormat: 'yy/mm/dd'
 		    });
 		 
@@ -153,10 +154,10 @@
 		//폼의 서브밋 이벤트
 		$('#f').on('submit', (ev)=>{
 			
-			if($('#checkIn').val() == '' || $('#checkOut').val() == ''){
+			if($('#roomCheckIn').val() == '' || $('#roomCheckOut').val() == ''){
 				alert('날짜를 선택해주세요.');
 				ev.preventDefault();
-			}
+		}
 			
 		})
 		
@@ -168,8 +169,8 @@
   
    function fnDate(){
 		
-		 $('#checkIn').datepicker('option', 'minDate','0');//오늘부터 선택가능
-		 $('#checkOut').datepicker('option', 'minDate','+1');//다음날부터 선택가능 특정날짜 키워드로 찾아보기
+		 $('#roomCheckIn').datepicker('option', 'minDate','0');//오늘부터 선택가능
+		 $('#roomCheckOut').datepicker('option', 'minDate','+1');//다음날부터 선택가능 특정날짜 키워드로 찾아보기
 		
 	} 
   
@@ -180,20 +181,20 @@
 	<jsp:include page="layout/header.jsp"></jsp:include>
 	
 	<div class="background">
-		<img src="resources/images/hotel.jpg" alt="main" width="100%" height="850px">
+		<img src="resources/image/hotel.jpg" alt="main" width="100%" height="850px">
 	</div>
 	
 	<div class="center">
 		
-		<form id="f" action="${contextPath}/room/roomReservation" method="post">
+		<form id="f" action="${contextPath}/room/roomList" method="post">
 		
 		<div class="searchBar">
 			
 			<div id="checkInOut" style= "padding-left: 200px;">
 			CHECK IN/OUT
-			<input type="text" id="checkIn" name="checkIn" style="padding-top: 8px;">
+			<input type="text" id="roomCheckIn" name="roomCheckIn" style="padding-top: 8px;">
 			~
-			<input type="text" id="checkOut" name="checkOut" style="padding-top: 8px;">
+			<input type="text" id="roomCheckOut" name="roomCheckOut" style="padding-top: 8px;">
 			</div>	
 			&nbsp;&nbsp;	
 			<button class="custom-btn btn-13" >검색</button>
@@ -210,8 +211,24 @@
 			
 		</div>
 
+	<div class="footer">
+			<div class="end_title">
+				YOGIOTEUR
+				<hr>
+					<div class="info">
+						(주)여기오떼르
+						제주특별자치도 서귀포시 비자림로 2074 63616
+								<nav>
+									<ul>
+										<li><a href="https://www.facebook.com/"><i class="fa-brands fa-facebook-square"></i></a></li>
+										<li><a href="https://twitter.com/"><i class="fa-brands fa-twitter-square"></i></a></li>
+										<li><a href="https://www.instagram.com/"><i class="fa-brands fa-instagram"></i></a></li>
+									</ul>
+								
+								</nav>
+					</div>
+			</div>
+		</div>
 
-	<jsp:include page="layout/footer.jsp"></jsp:include>
-	
 </body>
 </html>

@@ -1,16 +1,18 @@
 package com.tp.yogioteur.service;
 
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.servlet.ModelAndView;
 
+import com.tp.yogioteur.domain.MemberDTO;
 import com.tp.yogioteur.domain.PriceDTO;
 import com.tp.yogioteur.domain.ReservationDTO;
 import com.tp.yogioteur.mapper.ReservationMapper;
@@ -22,10 +24,20 @@ public class ReservationServiceImpl implements ReservationService {
 	@Autowired
 	private ReservationMapper reservationMapper;
 	
+	
+	
+	@Override
+	public void reserToken(HttpServletRequest request, Model model) {
+		String no = ReservationUtils.reservataionCode(8).trim();
+		String reserNo = "RN_" + no;
+		System.out.println(reserNo);
+		model.addAttribute("reserNo", reserNo);
+	}
+	
 	@Override
 	public void payments(HttpServletRequest request, HttpServletResponse response) {
 		
-		String no = ReservationUtils.reservataionCode(8).trim();
+		String reserNo = request.getParameter("resReserNo").trim();
 		Long memberNo = Long.parseLong(request.getParameter("resMemberNo"));
 		Long roomNo = Long.parseLong(request.getParameter("resRoomNo"));
 		Long nonNo = 1L;
@@ -38,7 +50,7 @@ public class ReservationServiceImpl implements ReservationService {
 		String req = opt.orElse("요청 사항 없음");
 		
 		Integer people = adult + child;
-		String reserNo = "RN_" + no;
+		System.out.println(reserNo);
 		
 		ReservationDTO reservation = ReservationDTO.builder()
 				.reserNo(reserNo)
@@ -98,5 +110,16 @@ public class ReservationServiceImpl implements ReservationService {
 		
 //		System.out.println(reservationMapper.reservationSelectConfirm(no));
 //		System.out.println(reservationMapper.priceSelectConfirm(no));
+	}
+	
+	@Override
+	public void reserList(HttpServletRequest request, Model model) {
+		HttpSession session = request.getSession(); //
+		MemberDTO member = (MemberDTO) session.getAttribute("loginMember"); //
+		Long no = member.getMemberNo();
+		
+		List<ReservationDTO> resers = reservationMapper.reservationMemberSelectConfirm(no);
+		
+		model.addAttribute("reservations", resers);
 	}
 }

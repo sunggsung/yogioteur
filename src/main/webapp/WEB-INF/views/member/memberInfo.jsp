@@ -227,9 +227,11 @@
 						<td>체크아웃날짜</td>
 						<td>예약인원</td>
 						<td>예약상태</td>
+						<td>예약취소</td> <!--  -->
 					</tr>
 				</thead>
 				<tbody id="confirmReser">
+					<c:forEach items="${reservations}" var="reservation"> <!--  -->
 						<tr>
 							<td>${reservation.reserNo}</td>
 							<td>${reservation.roomNo}</td>
@@ -238,7 +240,9 @@
 							<td>${reservation.reserCheckout}</td>
 							<td>${reservation.reserPeople}</td>
 							<td>예약상태</td>
+							<td><input type="button" value="예약취소" onclick="location.href='${contextPath}/reservation/reservationCancel?reserNo=${reservation.reserNo}'"></td>
 						</tr>
+					</c:forEach> <!--  -->
 				</tbody>
 			</table>
     </div>

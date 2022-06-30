@@ -141,12 +141,8 @@ public class MemberController {
 	
 	// 회원 정보
 	@GetMapping("/member/memberPage")
-	public String memberPage(HttpServletRequest request){ //
-		HttpSession session = request.getSession(); //
-		System.out.println(session.getAttribute("loginMember")); //
-		
-		// reservationService
-		
+	public String memberPage(HttpServletRequest request, Model model){ //
+		reservationService.reserList(request, model); //
 		return "member/memberInfo";
 	}
 	@GetMapping("/member/memberInfo")

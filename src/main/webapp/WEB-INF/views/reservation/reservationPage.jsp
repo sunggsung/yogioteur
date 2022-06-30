@@ -10,12 +10,14 @@
 <script src="../resources/js/jquery-3.6.0.js"></script>
 <!-- iamport.payment.js -->
 <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+<link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
 <script>
 	$(document).ready(function(){
 		$('#total_price').attr('value', $('#room_price').val());
 		$('#hidden_price').attr('value', $('#room_price').val());
 		tipVal();
+		
 	})
 	function fnPayment() {
 		if($('#adult').val() == 0) {
@@ -31,8 +33,8 @@
 				alert('취소하셨습니다.');
 				return false;
 			} else {
-				document.getElementById('f').submit();
-				// requestPay();
+				// document.getElementById('f').submit();
+				paymentData();
 			}
 		}
 	}
@@ -126,26 +128,44 @@
 		
 		return sumVal;
 	}
-	function requestPay() {
+	function paymentData() {
+		const data = {
+				merchant : $('#resReserNo').val(),
+				roomName : $('#resRoomNo').val(),
+				amount : $('#total_price').val(),
+				userEmail : $('#userEmail').val(),
+				userName : $('#userName').val(),
+				userTel : $('#userTel').val(),
+				userAddr : $('#userAddr').val(),
+				userPost : $('#userPost').val()
+		}
+		requestPay(data);
+	}
+	
+	function requestPay(data) {
 		var IMP = window.IMP;
 		IMP.init("imp40476994");
 		
 	    IMP.request_pay({ // param
 	        pg: "html5_inicis",
 	        pay_method: 'card',
-	        merchant_uid: "merchant_" + new Date().getTime(),
-	        name: "노르웨이",
-	        amount: 101,
-	        buyer_email: "gildong@gmail.com",
-	        buyer_name: "홍이동",
-	        buyer_tel: "010-4242-4242",
-	        buyer_addr: "서울특별시 강남구 신사동",
-	        buyer_postcode: "01181",
-	        m_redirect_url: 'https://http://localhost:9090/payments/complete'
+	        merchant_uid: data.merchant,
+	        name: data.roomName,
+	        amount: data.amount,
+	        buyer_email: data.userEmail,
+	        buyer_name: data.userName,
+	        buyer_tel: data.userTel,
+	        buyer_addr: data.userAddr,
+	        buyer_postcode: data.userPost
 	    }, function (rsp) { // callback
             console.log(rsp);
 	        if (rsp.success) {
-	            var msg;
+	            var msg = '결제되었습니다.'
+	            var result = {
+	            		"imp_uid" : rsp.imp_uid,
+	            		"merchant_uid" : rsp.merchant_uid,
+	            		
+	            }
                 msg += '고유ID : ' + rsp.imp_uid;
                 msg += '상점 거래ID : ' + rsp.merchant_uid;
                 msg += '결제 금액 : ' + rsp.paid_amount;
@@ -353,7 +373,19 @@
 			</div>
 			
 				<input type="hidden" name="resMemberNo" id="resMemberNo" value="${loginMember.memberNo}">
-				<input type="hidden" name="resRoomNo" id="resRoomNo" value="1">
+				<input type="hidden" name="resReserNo" id="resReserNo" value="${reserNo}">
+				
+				<input type="hidden" name="resCheckIn" id="resCheckIn" value="${roomInfo.chkIn}">			
+				<input type="hidden" name="resCheckOut" id="resCheckOut" value="${roomInfo.chkOut}">	
+				<input type="hidden" name="resRoomNo" id="resRoomNo" value="${roomInfo.roomNo}">	
+				<input type="hidden" name="resRoomName" id="resRoomName" value="${roomInfo.roomName}">	
+				<input type="hidden" name="resRoomPr" id="resRoomPr" value="${roomInfo.roomPrice}">	
+				
+				<input type="hidden" name="userName" id="userName" value="${loginMember.memberName}">
+				<input type="hidden" name="userEmail" id="userEmail" value="${loginMember.memberEmail}">
+				<input type="hidden" name="userTel" id="userTel" value="${loginMember.memberPhone}">
+				<input type="hidden" name="userAddr" id="userAddr" value="${loginMember.memberRoadAddr}">
+				<input type="hidden" name="userPost" id="userPost" value="${loginMember.memberPostCode}">
 			
 			<textarea readonly>개인정보보호법에 따라 ...</textarea><br>
 			

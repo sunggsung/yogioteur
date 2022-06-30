@@ -22,6 +22,7 @@ public class RoomDTO {
 	private Integer roomPrice;
 	
 	private RoomTypeDTO roomTypeDTO;
+	private ImageDTO imageDTO;
 	
 	
 }

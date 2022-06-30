@@ -4,55 +4,60 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.tp.yogioteur.mapper.RoomMapper">
-
-	<insert id="insertRoom" parameterType="RoomDTO">
-		<selectKey keyProperty="roomNo" resultType="Long" order="BEFORE">
-			SELECT ROOM_SEQ.NEXTVAL
-			  FROM DUAL
-		</selectKey>
-		INSERT INTO ROOM
-			(ROOM_NO, RT_NO, ROOM_NAME, ROOM_STATUS, ROOM_CHECKIN, ROOM_CHECKOUT, ROOM_PRICE)
-		VALUES
-			(#{roomNo}, #{rtNo}, #{roomName}, #{roomStatus}, SYSDATE, #{roomCheckOut}, #{roomPrice})
-	</insert>
 	
-	<insert id="insertImage" parameterType="ImageDTO">
-		INSERT INTO IMAGE
-			(IMAGE_NO, ROOM_NO, IMAGE_PATH, IMAGE_SAVED, IMAGE_ORIGIN)
-		VALUES
-			(IMAGE_SEQ.NEXTVAL, #{roomNo}, #{imagePath}, #{imageSaved}, #{imageOrigin})
-	</insert>
+	<resultMap type="ImageDTO" id="ImageMap">
+		<id column="IMAGE_NO" property="imageNo"/>
+		<result column="ROOM_NO" property="roomNo"/>
+		<result column="IMAGE_PATH" property="imagePath"/>
+		<result column="IMAGE_SAVED" property="imageSaved"/>
+		<result column="IMAGE_ORIGIN" property="imageOrigin"/>
+	</resultMap>
 	
-	<resultMap type="RoomTypeDTO" id="RoomTypeDTO">
-		<result column="RT_NO" property="rtNo"/>
+	<resultMap type="RoomTypeDTO" id="RoomTypeMap">
+		<id column="RT_NO" property="rtNo"/>
 		<result column="RT_TYPE" property="rtType"/>
 		<result column="RT_MAX" property="rtMax"/>
 	</resultMap>
 	
-	<resultMap type="RoomDTO" id="RoomDTO">
-		<result column="ROOM_NO" property="roomNo"/>
+	<resultMap type="RoomDTO" id="RoomDTOMap">
+		<id column="ROOM_NO" property="roomNo"/>
 		<result column="RT_NO" property="rtNo"/>
 		<result column="ROOM_NAME" property="roomName"/>
 		<result column="ROOM_PRICE" property="roomPrice"/>
 		<result column="ROOM_STATUS" property="roomStatus"/>
 		<result column="ROOM_CHECKIN" property="roomCheckIn"/>
 		<result column="ROOM_CHECKOUT" property="roomCheckOut"/>
-		<collection property="roomTypeDTO" resultMap="RoomTypeDTO"/>
+		<collection property="roomTypeDTO" resultMap="RoomTypeMap"/>
+		<collection property="imageDTO" resultMap="ImageMap"/>
 	</resultMap>
 	
-	<select id="selectRoomList" resultMap="RoomDTO">
-		SELECT R.ROOM_NO, R.RT_NO, R.ROOM_NAME, R.ROOM_STATUS, R.ROOM_CHECKIN, R.ROOM_CHECKOUT, R.ROOM_PRICE, T.RT_TYPE, T.RT_MAX
+	
+	<select id="checkInRoomList" parameterType="Map" resultType="RoomDTO">
+		<![CDATA[
+		SELECT ROOM_NO, RT_NO, ROOM_NAME, ROOM_STATUS, ROOM_CHECKIN, ROOM_CHECKOUT, ROOM_PRICE 
+		  FROM ROOM
+		 WHERE TO_DATE(ROOM_CHECKIN, 'YY/MM/DD') <= TO_DATE(#{roomCheckIn},'YYYY/MM/DD')
+		   AND TO_DATE(ROOM_CHECKOUT, 'YY/MM/DD') >= TO_DATE(#{roomCheckOut},'YYYY/MM/DD')
+	 	   AND ROOM_STATUS = 0
+		 ]]>
+	</select>
+		
+	<select id="selectImageByNo" parameterType="Long" resultType="ImageDTO">
+		SELECT ROOM_NO, IMAGE_NO, IMAGE_ORIGIN, IMAGE_PATH, IMAGE_SAVED
+		  FROM IMAGE
+		 WHERE ROOM_NO = #{roomNo}
+		   AND ROWNUM = 1
+	</select>	
+	
+	<select id="selectRoomTypeByNo" parameterType="Long" resultMap="RoomDTOMap">
+		SELECT T.RT_NO, T.RT_TYPE, T.RT_MAX, R.ROOM_NAME
 		  FROM ROOM R INNER JOIN ROOM_TYPE T
 		    ON R.RT_NO = T.RT_NO
-		 ORDER BY R.ROOM_NO DESC
+		 WHERE R.ROOM_NO = #{roomNo}
 	</select>
 	
-	<select id="checkInRoomList" resultType="RoomDTO">
-		SELECT ROOM_NO, RT_NO, ROOM_NAME, ROOM_STATUS, ROOM_CHECK_IN, ROOM_CHECK_OUT, ROOM_PRICE
-		  FROM ROOM
-		 WHERE ROOM_CHECK_IN = #{roomCheckIn}
-		   AND ROOM_STATUS = 0
-	
+	<select id="detailImageByNo" parameterType="Long" resultType="ImageDTO">
+		
 	</select>
 	
 </mapper>
