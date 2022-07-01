@@ -21,6 +21,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<typeAlias type="com.tp.yogioteur.domain.RoomTypeDTO" alias="RoomTypeDTO" />
 		<typeAlias type="com.tp.yogioteur.domain.ImageDTO" alias="ImageDTO" />
 		<typeAlias type="com.tp.yogioteur.domain.PriceDTO" alias="PriceDTO" />
+		<typeAlias type="com.tp.yogioteur.domain.PaymentDTO" alias="PaymentDTO" />
 	</typeAliases>
 	
 </configuration>

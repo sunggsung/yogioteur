@@ -13,4 +13,5 @@ public interface PaymentService {
 	
 	int paymentInfo(String merchant_uid, String access_token) throws IOException;
 	public Map<String, Object> paymentSave(PaymentDTO payment);
+	public String paymentSearch(String resNo);
 }

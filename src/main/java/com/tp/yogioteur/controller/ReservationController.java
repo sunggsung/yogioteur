@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.tp.yogioteur.domain.PaymentDTO;
 import com.tp.yogioteur.service.PaymentService;
 import com.tp.yogioteur.service.ReservationService;
-import com.tp.yogioteur.service.RoomService;
 
 @Controller
 public class ReservationController {
@@ -77,10 +74,11 @@ public class ReservationController {
 	@DeleteMapping(value="/reserRemove/{resNo}", produces="application/json")
 	public Map<String, Object> removeReservation(@PathVariable String resNo) throws IOException{
 		String token = paymentService.getToken();
-		int amount = paymentService.paymentInfo(resNo, token);
+		String impUid = paymentService.paymentSearch(resNo);
 		
-		System.out.println(amount);
+		int amount = paymentService.paymentInfo(impUid, token);
 		
+		paymentService.paymentCancle(resNo, token, amount, "취소");
 		
 		return reservationService.removeReservation(resNo);
 	}

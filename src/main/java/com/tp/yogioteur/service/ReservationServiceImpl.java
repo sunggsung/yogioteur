@@ -26,8 +26,6 @@ public class ReservationServiceImpl implements ReservationService {
 	@Autowired
 	private ReservationMapper reservationMapper;
 	
-	
-	
 	@Override
 	public void reserToken(HttpServletRequest request, Model model) {
 		String no = ReservationUtils.reservataionCode(8).trim();
@@ -140,7 +138,9 @@ public class ReservationServiceImpl implements ReservationService {
 	@Override
 	public Map<String, Object> removeReservation(String resNo) {
 		Map<String, Object> map = new HashMap<>();
-		map.put("res", reservationMapper.deleteReservation(resNo));
+		map.put("res1", reservationMapper.deleteReservation(resNo));
+		map.put("res2", reservationMapper.deletePayments(resNo));
+		map.put("res3", reservationMapper.deletePrice(resNo));
 		return map;
 	}
 }

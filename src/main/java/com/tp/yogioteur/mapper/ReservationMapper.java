@@ -21,5 +21,8 @@ public interface ReservationMapper {
 	public RoomDTO reservationRoomSelectConfirm(Long roomNo); 
 	
 	public int deleteReservation(String resNo);
+	public int deletePayments(String resNo);
+	public int deletePrice(String resNo);
 	public int paymentInsert(PaymentDTO payment);
+	public PaymentDTO paymentSelectByNo(String resNo);
 }

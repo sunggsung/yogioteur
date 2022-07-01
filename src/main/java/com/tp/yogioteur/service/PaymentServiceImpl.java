@@ -10,10 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -64,7 +62,6 @@ public class PaymentServiceImpl implements PaymentService {
 		bw.flush();
 		bw.close();
 		
-
 		BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
 
 		Gson gson = new Gson();
@@ -74,11 +71,11 @@ public class PaymentServiceImpl implements PaymentService {
 		StringBuilder sb = new StringBuilder();
 		sb.append(bw);
 		
-		System.out.println("gson:" + gson);
-		System.out.println("bw:" + sb.toString());		
-		System.out.println("br:" + br.toString());
-		System.out.println("conn:" + conn);		
-		System.out.println("response:" + response);
+//		System.out.println("gson:" + gson);
+//		System.out.println("bw:" + sb.toString());		
+//		System.out.println("br:" + br.toString());
+//		System.out.println("conn:" + conn);		
+//		System.out.println("response:" + response);
 
 		String token = gson.fromJson(response, Map.class).get("access_token").toString();
 
@@ -93,6 +90,15 @@ public class PaymentServiceImpl implements PaymentService {
 		Map<String, Object> map = new HashMap<>();
 		map.put("res", reservationMapper.paymentInsert(payment));
 		return map;
+	}
+	
+	@Override
+	public String paymentSearch(String resNo) {
+		System.out.println(resNo);
+		
+		PaymentDTO payment = reservationMapper.paymentSelectByNo(resNo);
+		
+		return payment.getImpUid();
 	}
 
 	@Override

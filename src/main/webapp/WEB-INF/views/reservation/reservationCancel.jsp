@@ -14,13 +14,17 @@
 	$(function(){
 		$('#removeReser').on('click', function(){
 			const resNo = $('#popUpReserNo').val();
-			let deleteCount = 0;
+			let deleteReservation = 0;
+			let deletePayments = 0;
+			let deletePrice = 0;
 			$.ajax({
 				url: '${contextPath}/reserRemove/' + resNo,
 				type: 'DELETE',
 				dataType: 'json',
 				success: function(obj){
-					deleteCount += obj.res;
+					deleteReservation += obj.res1;
+					deletePayments += obj.res2;
+					deletePrice += obj.res3;
 				}
 			})
 			if(!confirm('예약을 취소하시겠습니까?')) {
