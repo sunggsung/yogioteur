@@ -1,7 +1,9 @@
 package com.tp.yogioteur.service;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +32,6 @@ public class ReservationServiceImpl implements ReservationService {
 	public void reserToken(HttpServletRequest request, Model model) {
 		String no = ReservationUtils.reservataionCode(8).trim();
 		String reserNo = "RN_" + no;
-		System.out.println(reserNo);
 		model.addAttribute("reserNo", reserNo);
 	}
 	
@@ -50,7 +51,6 @@ public class ReservationServiceImpl implements ReservationService {
 		String req = opt.orElse("요청 사항 없음");
 		
 		Integer people = adult + child;
-		System.out.println(reserNo);
 		
 		ReservationDTO reservation = ReservationDTO.builder()
 				.reserNo(reserNo)
@@ -108,8 +108,22 @@ public class ReservationServiceImpl implements ReservationService {
 		model.addAttribute("reservation", reservationMapper.reservationSelectConfirm(no));
 		model.addAttribute("money", reservationMapper.priceSelectConfirm(no));
 		
+		ReservationDTO reservation = reservationMapper.reservationSelectConfirm(no);
+		Long rNo = reservation.getRoomNo();
+		model.addAttribute("room", reservationMapper.reservationRoomSelectConfirm(rNo));
+		
 //		System.out.println(reservationMapper.reservationSelectConfirm(no));
 //		System.out.println(reservationMapper.priceSelectConfirm(no));
+	}
+	
+	@Override
+	public void confirmsPopUp(String no, HttpServletRequest request, Model model) {
+		model.addAttribute("reservation", reservationMapper.reservationSelectConfirm(no));
+		model.addAttribute("money", reservationMapper.priceSelectConfirm(no));
+		
+		ReservationDTO reservation = reservationMapper.reservationSelectConfirm(no);
+		Long rNo = reservation.getRoomNo();
+		model.addAttribute("room", reservationMapper.reservationRoomSelectConfirm(rNo));
 	}
 	
 	@Override
@@ -121,5 +135,12 @@ public class ReservationServiceImpl implements ReservationService {
 		List<ReservationDTO> resers = reservationMapper.reservationMemberSelectConfirm(no);
 		
 		model.addAttribute("reservations", resers);
+	}
+	
+	@Override
+	public Map<String, Object> removeReservation(String resNo) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("res", reservationMapper.deleteReservation(resNo));
+		return map;
 	}
 }

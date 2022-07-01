@@ -29,7 +29,28 @@
 		fnPhoneCheck();
 		fnPwCheck();
 		fnPwConfirm();
+		
+		popupOpen();
 	})
+	function popupOpen(){	
+		$(".cancelBtn").click(function(){ 
+			var cancelBtn = $(this);
+			
+			// checkBtn.parent() : checkBtn의 부모는 <td>이다.
+			// checkBtn.parent().parent() : <td>의 부모이므로 <tr>이다.
+			var tr = cancelBtn.parent().parent();
+			var td = tr.children();
+			
+			var no = td.eq(0).text();
+			
+			console.log(no);
+		
+			var popUrl = "${contextPath}/reservation/reservationCancel/" + no; //팝업창에 출력될 페이지 URL	
+			var popOption = "width=640, height=360, top=50, left=310, resizable=no, scrollbars=no, status=no;"; //팝업창 옵션(optoin)	
+			window.open(popUrl,"",popOption);	
+			})
+		}
+
 	
 	function fnModify(){
 		$('#modifyForm').on('submit', function(event){
@@ -233,14 +254,14 @@
 				<tbody id="confirmReser">
 					<c:forEach items="${reservations}" var="reservation"> <!--  -->
 						<tr>
-							<td>${reservation.reserNo}</td>
+							<td id="cancelPopUp">${reservation.reserNo}</td>
 							<td>${reservation.roomNo}</td>
 							<td>${loginMember.memberName}</td>
 							<td>${reservation.reserCheckin}</td>
 							<td>${reservation.reserCheckout}</td>
 							<td>${reservation.reserPeople}</td>
 							<td>예약상태</td>
-							<td><input type="button" value="예약취소" onclick="location.href='${contextPath}/reservation/reservationCancel?reserNo=${reservation.reserNo}'"></td>
+							<td><input type="button" value="예약취소" class="cancelBtn"></td>
 						</tr>
 					</c:forEach> <!--  -->
 				</tbody>

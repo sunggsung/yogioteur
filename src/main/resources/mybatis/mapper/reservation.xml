@@ -42,4 +42,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 WHERE MEMBER_NO = #{memberNo}
 	</select>
 	
+	<select id="reservationRoomSelectConfirm" parameterType="Long" resultType="RoomDTO">
+		SELECT ROOM_NO, RT_NO, ROOM_NAME, ROOM_STATUS, ROOM_CHECKIN, ROOM_CHECKOUT, ROOM_PRICE 
+		  FROM ROOM
+		 WHERE ROOM_NO = #{roomNo}
+	</select>
+	
+	<delete id="deleteReservation" parameterType="String"> 
+		DELETE FROM RESERVATION WHERE RESER_NO = #{resNo} 
+	</delete>
+	
+	<insert id="paymentInsert" parameterType="PriceDTO">
+		INSERT INTO PAYMENTS
+			(RESER_NO, IMP_UID, RESPONSE, AMOUNT)
+		VALUES
+			(#{merchantUid}, #{impUid}, #{response}, #{amount})
+	</insert>
 </mapper>

@@ -19,13 +19,14 @@
 	<h1>예약 확인</h1>
 	
 	객실 이미지        객실 이름 및 타입
-	
+		<img src="${contextPath}/room/view?roomNo=${room.roomNo}" width="300px">
+		${room.roomName}
 	체크인             체크아웃
-	
+		${room.roomCheckIn} ${room.roomCheckOut}
 	예약번호${reservation.reserNo}
 	투숙인원${reservation.reserPeople}
-	투숙객 이름
-	투숙객 전화번호
+	투숙객 이름${loginMember.memberName}
+	투숙객 전화번호${loginMember.memberPhone}
 	<c:if test="${loginMember ne null }">
 			<div>
 				이름 <input type="text" name="name" id="name" value="${loginMember.memberName}" readonly><br>

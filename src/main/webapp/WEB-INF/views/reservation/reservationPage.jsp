@@ -10,8 +10,6 @@
 <script src="../resources/js/jquery-3.6.0.js"></script>
 <!-- iamport.payment.js -->
 <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
-<link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
 <script>
 	$(document).ready(function(){
 		$('#total_price').attr('value', $('#room_price').val());
@@ -151,7 +149,7 @@
 	        pay_method: 'card',
 	        merchant_uid: data.merchant,
 	        name: data.roomName,
-	        amount: data.amount,
+	        amount: 103,
 	        buyer_email: data.userEmail,
 	        buyer_name: data.userName,
 	        buyer_tel: data.userTel,
@@ -160,22 +158,37 @@
 	    }, function (rsp) { // callback
             console.log(rsp);
 	        if (rsp.success) {
-	            var msg = '결제되었습니다.'
-	            var result = {
-	            		"imp_uid" : rsp.imp_uid,
-	            		"merchant_uid" : rsp.merchant_uid,
-	            		
-	            }
-                msg += '고유ID : ' + rsp.imp_uid;
-                msg += '상점 거래ID : ' + rsp.merchant_uid;
-                msg += '결제 금액 : ' + rsp.paid_amount;
-                msg += '카드 승인번호 : ' + rsp.apply_num;
-	            document.getElementById('f').submit();
+	        	let payments = JSON.stringify(
+	    			{
+	    				impUid : rsp.imp_uid,
+		        		merchantUid : rsp.merchant_uid,
+		        		response : "",
+		        		amount : rsp.paid_amount
+	    			}		
+	    		);
+	        	$.ajax({
+	        		url: '${contextPath}/payment/complete',
+	        		type: 'POST',
+	        		data: payments,
+	        		contentType: 'application/json',
+	        	}).done(function(data) {
+	        		 var msg = '결제되었습니다.\n';
+	     	            
+	                 msg += '주분 번호 : ' + rsp.imp_uid + '\n';
+	                 msg += '예약 번호 : ' + rsp.merchant_uid + '\n';
+	                 msg += '결제 금액 : ' + rsp.paid_amount;
+	                 alert(msg); 
+	     	         document.getElementById('f').submit();
+	            })
+	            .fail(function() {
+	            	var msg = '결제에 실패하였습니다.';
+	                msg += '에러내용 : ' + rsp.error_msg;
+	                alert(msg);
+	            })
 	        } else {
-	        	var msg = '결제에 실패하였습니다.';
-                msg += '에러내용 : ' + rsp.error_msg;
+	        	
 	        }
-	        alert(msg);
+	        
 	    });
     }
 </script>

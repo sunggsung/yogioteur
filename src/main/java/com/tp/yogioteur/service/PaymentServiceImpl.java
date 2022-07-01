@@ -6,17 +6,36 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.tp.yogioteur.domain.PaymentDTO;
+import com.tp.yogioteur.mapper.ReservationMapper;
+
+import lombok.Getter;
+import lombok.ToString;
 
 public class PaymentServiceImpl implements PaymentService {
 
+	@Autowired
+	private ReservationMapper reservationMapper;
+	
 	private String impKey;
 	private String impSecret;
+	
+	@ToString
+	@Getter
+	private class Response {
+		private PaymentDTO response;
+	}
 	
 	@Override
 	public String getToken() throws IOException {
@@ -68,16 +87,99 @@ public class PaymentServiceImpl implements PaymentService {
 
 		return token;
 	}
-
+	
 	@Override
-	public int paymentInfo(String imp_uid, String access_token) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Map<String, Object> paymentSave(PaymentDTO payment) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("res", reservationMapper.paymentInsert(payment));
+		return map;
 	}
 
 	@Override
-	public void paymentCancle(String imp_uid, String access_token, String reason) {
-		// TODO Auto-generated method stub
+	public int paymentInfoF(String imp_uid, String access_token) throws IOException {
+		HttpsURLConnection conn = null;
+		 
+	    URL url = new URL("https://api.iamport.kr/payments/" + imp_uid);
+	 
+	    conn = (HttpsURLConnection) url.openConnection();
+	 
+	    conn.setRequestMethod("GET");
+	    conn.setRequestProperty("Authorization", access_token);
+	    conn.setDoOutput(true);
+	 
+	    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+	    
+	    Gson gson = new Gson();
+	    
+	    Response response = gson.fromJson(br.readLine(), Response.class);
+	    
+	    br.close();
+	    conn.disconnect();
+	    
+	    return response.getResponse().getAmount();
+	}
+	
+	@Override
+	public int paymentInfo(String merchant_uid, String access_token) throws IOException {
+		HttpsURLConnection conn = null;
+		 
+	    URL url = new URL("https://api.iamport.kr/payments/" + merchant_uid);
+	 
+	    conn = (HttpsURLConnection) url.openConnection();
+	 
+	    conn.setRequestMethod("GET");
+	    conn.setRequestProperty("Authorization", access_token);
+	    conn.setDoOutput(true);
+	 
+	    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+	    
+	    Gson gson = new Gson();
+	    
+	    Response response = gson.fromJson(br.readLine(), Response.class);
+	    
+	    br.close();
+	    conn.disconnect();
+	    
+	    return response.getResponse().getAmount();
+	}
+
+	@Override
+	public void paymentCancle(String merchant_uid, String access_token, int amount, String reason) throws IOException {
+		System.out.println("결제 취소");
+		
+		System.out.println(access_token);
+		
+		System.out.println(merchant_uid);
+		
+		HttpsURLConnection conn = null;
+		URL url = new URL("https://api.iamport.kr/payments/cancel");
+ 
+		conn = (HttpsURLConnection) url.openConnection();
+ 
+		conn.setRequestMethod("POST");
+ 
+		conn.setRequestProperty("Content-type", "application/json");
+		conn.setRequestProperty("Accept", "application/json");
+		conn.setRequestProperty("Authorization", access_token);
+ 
+		conn.setDoOutput(true);
+		
+		JsonObject json = new JsonObject();
+ 
+		json.addProperty("reason", reason);
+		json.addProperty("merchant_uid", merchant_uid);
+		json.addProperty("amount", amount);
+ 
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+ 
+		bw.write(json.toString());
+		bw.flush();
+		bw.close();
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+ 
+		br.close();
+		conn.disconnect();
 
 	}
 
