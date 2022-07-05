@@ -25,11 +25,12 @@
 		}
 		$('#btnRemove').on('click', function() {
 			if(confirm('삭제하시겠습니까?')) {
-				location.href='${contextPath}/room/remove?roomNo=${room.roomNo}';
+				location.href='${contextPath}/room/removeRoom?roomNo=${room.roomNo}';
 			}
 		})
 		fnPreview($('#image1'), $('#preview1'));
 		fnPreview($('#image2'), $('#preview2'));
+		fnModify();
 	})
 	
 	function fnPreview(image, preview) {
@@ -43,6 +44,17 @@
 			} else {
 				preview.attr('src', "");
 			}
+		})
+	}
+	
+	function fnModify() {
+		$('#f').on('submit', function(event) {
+			if($('#roomName').val() == '${room.roomName}') {
+				alert('변경사항이 없습니다.');
+				event.preventDefault();
+				return false;
+			}
+			return true;
 		})
 	}
 	
@@ -77,12 +89,12 @@
 				
 				사진1 <input type="file" name="image1" id="image1">
 				<div>
-					<img id="preview1" alt="${image[0].imageOrigin}" src="${contextPath}/room/display?imageNo=${image[0].imageNo}" width="300px">
+					<img id="preview1" alt="${image[0].imageOrigin}" src="${contextPath}/room/displayImage?imageNo=${image[0].imageNo}" width="300px">
 					<input type="hidden" name="image1No" value="${image[0].imageNo}">
 				</div>
 				사진2 <input type="file" name="image1" id="image2">
 				<div>
-					<img id="preview2" alt="${image[1].imageOrigin}" src="${contextPath}/room/display?imageNo=${image[1].imageNo}" width="300px">
+					<img id="preview2" alt="${image[1].imageOrigin}" src="${contextPath}/room/displayImage?imageNo=${image[1].imageNo}" width="300px">
 					<input type="hidden" name="image2No" value="${image[1].imageNo}">
 				</div>
 				<button>수정</button>
@@ -93,4 +105,4 @@
 	</div>
 	<jsp:include page="../layout/footer.jsp"></jsp:include>
 </body>
-</html>
+</html>	

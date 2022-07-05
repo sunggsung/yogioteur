@@ -16,12 +16,15 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<typeAlias type="com.tp.yogioteur.domain.ReviewDTO" alias="ReviewDTO" />
 		<typeAlias type="com.tp.yogioteur.domain.ReviewReplyDTO" alias="ReviewReplyDTO" />
 		<typeAlias type="com.tp.yogioteur.domain.ReImageDTO" alias="ReImageDTO" />
+		<typeAlias type="com.tp.yogioteur.domain.QnaDTO" alias="QnaDTO" />
+		<typeAlias type="com.tp.yogioteur.domain.QnaReplyDTO" alias="QnaReplyDTO" />
 		<typeAlias type="com.tp.yogioteur.domain.ReservationDTO" alias="ReservationDTO" />
 		<typeAlias type="com.tp.yogioteur.domain.RoomDTO" alias="RoomDTO" />
 		<typeAlias type="com.tp.yogioteur.domain.RoomTypeDTO" alias="RoomTypeDTO" />
 		<typeAlias type="com.tp.yogioteur.domain.ImageDTO" alias="ImageDTO" />
 		<typeAlias type="com.tp.yogioteur.domain.PriceDTO" alias="PriceDTO" />
 		<typeAlias type="com.tp.yogioteur.domain.PaymentDTO" alias="PaymentDTO" />
+		<typeAlias type="com.tp.yogioteur.domain.NonMemberDTO" alias="NonMemberDTO" />
 	</typeAliases>
 	
 </configuration>

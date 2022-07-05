@@ -21,8 +21,7 @@
 			<br><br><br><br><br>
 			<a href="${contextPath}/admin/room">객실목록</a><br>
 			<a href="${contextPath}/admin/addRoomPage">객실등록</a><br>
-			<a href="${contextPath}/nonMember/nonMemberLoginPage">비회원 로그인</a>
-			<a href="${contextPath}/admin/weatherPage">API 조회</a> 
+			<a href="${contextPath}/admin/tourPage">API 조회</a> 
 		</div>
 	</div>
 	

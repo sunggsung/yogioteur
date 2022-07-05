@@ -11,7 +11,6 @@
 <title>Insert title here</title>
 <script src="../resources/js/jquery-3.6.0.js"></script>
 <script>
-
 	$(function(){
 		fnPwCheck();
 		fnPwConfirm();
@@ -34,7 +33,6 @@
 		})
 	}
 	
-
 	let rePwPass = false;
 	function fnPwConfirm(){
 		$('#memberRePw').on('keyup', function(){
@@ -48,7 +46,6 @@
 		})
 	}
 	
-
 	function fnIdEmailCheck(){
 		return new Promise(function(resolve, reject){
 			let regEmail = /^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+(\.[a-zA-Z]{2,}){1,2}$/;
@@ -56,7 +53,6 @@
 				alert('잘못된 형식의 이메일입니다.');
 				return;
 			}
-
 			$.ajax({
 				url: '${contextPath}/member/idEmailCheck',
 				type: 'get',
@@ -73,7 +69,6 @@
 		})
 	}
 	
-
 	function fnEmailAuth(){
 		$('#btnGetAuthCode').on('click', function(){
 			fnIdEmailCheck()
@@ -97,7 +92,6 @@
 		})
 	}
 	
-
 	let authCodePass = false;
 	function fnVerifyAuthCode(authCode){
 		$('#btnVerifyAuthCode').on('click', function(){
@@ -113,14 +107,12 @@
 		})
 	}
 	
-
 	function fnToUpperCase(){
 		$('#authCode').on('keyup', function(){
 			$('#authCode').val($('#authCode').val().toUpperCase());
 		})
 	}
 	
-
 	function fnChangePw(){
 		$('#findPwForm').on('submit', function(event){
 			if(pwPass == false || rePwPass == false){
@@ -142,50 +134,145 @@
 	.changeArea {
 		display: none;
 	}
-	.authArea > a {
-		color : black;
-	}
 	.dont {
 		color: red;
 	}
 	.ok {
 		color: blue;
 	}
+	.InputArea {
+		display: block;
+		position: relative;
+		margin: 0;
+		width: 100%;
+		height: 51px;
+		border: solid 1px #dadada;
+		padding: 10px 110px 10px 14px;
+		box-sizing: border-box;
+		vertical-align: top;
+	}
+	form > a {
+		text-decoration: none;
+		color: gray;	
+		font-size: 30px;
+	}
+	.button_box > a {
+		color : #333;
+		text-decoration: none;
+	}
+    * {
+    	padding: 0;
+    	margin: 0;
+    }
+    .join {
+    	width: 390px;
+    	height: 300px;
+    	margin: 110px auto;
+    	padding: 60px 50px 51px;
+    	border: 1px solid #dadada;
+    }
+    .title {
+       	width: 100%;
+       	height: 30px;
+       	margin: 0 auto 20px;
+       	text-align: center;
+    }
+    .content {
+    	margin: 10px 0;
+    }
+     .InputArea {
+		display: block;
+		position: relative;
+		margin: 20px 0;
+		width: 100%;
+		height: 51px;
+		border: solid 1px #dadada;
+		padding: 10px 110px 10px 14px;
+		box-sizing: border-box;
+		vertical-align: top;
+	}
+     .box {
+		border: 0 none;
+		display: block;
+		width: 100%;
+		height: 30px;
+		outline: none;
+	 }
+     .boxes {
+		height: 20px;
+		width: 60%;
+		border: solid 1px #dadada;
+		outline: none;
+	 }
+	.button_box {
+         margin-top: 20px;
+         text-align: center;
+         border-top: 1px solid #f2f2f5;
+         font-size: 14px;
+     }
+     .button_box > a {
+         display: inline-block;
+         padding: 19px 18px 0;
+         color: #333;
+     }
+     .btn_find {
+         display: block;
+         height: 50px;
+         width: 390px;
+         background-color: black;
+         font-size: 14px;
+         font-weight: bold;
+         color: #fff;
+         letter-spacing: -0.5px;
+         text-align: center;
+         line-height: 51px;	
+     } 
 </style>
 </head>
 <body>
 		
 	<jsp:include page="../layout/header.jsp"></jsp:include>
-			
-		<form id="findPwForm" action="${contextPath}/member/findPw" method="post">
-	
-		<h3>비밀번호 찾기</h3>
-	
-		<div class="authArea">	
-			아이디<br>
-			<input type="text" name="memberId" id="memberId"><br><br>
-			가입 당시 이메일<br>
-			<input type="text" id="memberEmail">
-			<input type="button" value="인증번호받기" id="btnGetAuthCode"><br>
-			<span id="emailMsg"></span><br>
-			<input type="text" id="authCode" placeholder="인증코드 입력">
-			<input type="button" value="인증하기" id="btnVerifyAuthCode"><br><br>
-			<input type="button" value="취소하기" onclick="location.href='${contextPath}'"><br>
-			<a href="${contextPath}/member/loginPage">로그인</a> /
-			<a href="${contextPath}/member/findIdPage">아이디찾기</a>
-		</div>
-	
-		<div class="changeArea">
-			<h3>비밀번호 재설정</h3>
-			<input type="password" name="memberPw" id="memberPw" placeholder="새 비밀번호">
-			<span id="pwMsg"></span><br><br>
-			<input type="password" id="memberRePw" placeholder="새 비밀번호 확인">
-			<span id="rePwMsg"></span><br><br>
-			<button>확인</button>
-		</div>
 		
-	</form>
-
+		<div class="join" >
+			<form id="findPwForm" action="${contextPath}/member/findPw" method="post">
+			<div class="authArea">
+				<h3 class="title">비밀번호 찾기</h3>
+					<div class="text">
+						<p>본인확인 후 비밀번호를 다시 설정할 수 있습니다.</p>
+					</div>
+					<div class="InputArea">	
+						<input type="text" name="memberId" id="memberId" class="box" placeholder="아이디">
+					</div>
+					<div class="find_box">
+						<div class="InputArea">
+							<input type="text" id="memberEmail" class="boxes" placeholder="이메일">
+							<input type="button" value="인증번호받기" id="btnGetAuthCode">
+						</div>
+							<span id="emailMsg"></span>
+						<div class="InputArea">
+							<input type="text" id="authCode" class="boxes" placeholder="인증코드를 입력하세요">
+							<input type="button" value="인증하기" id="btnVerifyAuthCode">
+						</div>
+						<div class="button_box">
+							<a href="${contextPath}/member/loginPage">로그인</a> |
+							<a href="${contextPath}/member/findIdPage">아이디찾기</a>
+						</div>
+					</div>
+			</div>
+				<div class="changeArea">
+					<h3 class="title">비밀번호 재설정</h3>
+						<div class="InputArea">
+							<input type="password" name="memberPw" id="memberPw" class="box" placeholder="새 비밀번호">
+						</div>
+						<span id="pwMsg"></span>
+						<div class="InputArea">
+							<input type="password" id="memberRePw" class="box" placeholder="새 비밀번호 확인">
+						</div>
+							<span id="rePwMsg"></span>
+						<button class="btn_find">확인</button>
+				</div>
+			</form>
+		</div>
 	<jsp:include page="../layout/footer.jsp"></jsp:include>
 
 </body>

@@ -351,6 +351,16 @@ public class AdminServiceImpl implements AdminService {
 		}
 	}
 	
+	@Override
+	public Map<String, Object> findRoomByStatus(int roomStatus) {
+		List<RoomDTO> rooms = adminMapper.selectRoomByStatus(roomStatus);
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("rooms", rooms);
+		
+		return map;
+	}
+	
 	
 	@Override
 	public void findMembers(HttpServletRequest request, Model model) {
@@ -380,24 +390,13 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	@Override
-	public void findReservations(HttpServletRequest request, Model model) {
-		Optional<String> opt = Optional.ofNullable(request.getParameter("page"));
-		int page = Integer.parseInt(opt.orElse("1"));
-		int totalRecord = adminMapper.selectReservationCount();
-		
-		PageUtils pageUtils = new PageUtils();
-		pageUtils.setPageEntity(totalRecord, page);
-		
+	public Map<String, Object> findReservations() {
 		Map<String, Object> map = new HashMap<>();
-		map.put("beginRecord", pageUtils.getBeginRecord());
-		map.put("endRecord", pageUtils.getEndRecord());
 		
-		List<MemberDTO> reservations = adminMapper.selectReservationList(map);
-		System.out.println(reservations);
-		model.addAttribute("totalRecord", totalRecord);
-		model.addAttribute("reservations", reservations);
-		model.addAttribute("beginNo", totalRecord - (page - 1) * pageUtils.getRecordPerPage());
-		model.addAttribute("paging", pageUtils.getPaging(request.getContextPath() + "/admin/reservation"));
+		List<MemberDTO> reservations = adminMapper.selectReservationList();
+		map.put("reservations", reservations);
+		
+		return map;
 	}
 	
 	@Override
@@ -407,6 +406,16 @@ public class AdminServiceImpl implements AdminService {
 		List<ReservationDTO> reservation =  adminMapper.selectReservationByMemberNo(memberNo);
 		map.put("reservation", reservation);
 		return map;
+	}
+	
+	@Override
+	public Model findReservationByReserNo(HttpServletRequest request, Model model) {
+		Long reserNo = Long.parseLong(request.getParameter("reserNo"));
+		ReservationDTO reservation = adminMapper.selectReservationByReserNo(reserNo);
+		model.addAttribute("reservation", reservation);
+		model.addAttribute("member", reservation.getMemberNo());
+		model.addAttribute("room", reservation.getRoomNo());
+		return model;
 	}
 	
 }

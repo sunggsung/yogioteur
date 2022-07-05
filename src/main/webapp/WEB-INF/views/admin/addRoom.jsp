@@ -51,6 +51,9 @@
 			if($('#image1').val() == '' || $('#image2').val() == '') {
 				event.preventDefault();
 				alert('이미지를 첨부하세요.');
+			} else if($('#roomName').val() == '' || $('#roomPrice').val() == '') {
+				event.preventDefault();
+				alert('필수정보를 입력하세요.');
 			}
 		})
 	}

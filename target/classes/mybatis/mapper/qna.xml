@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.tp.yogioteur.mapper.QnaMapper">
+
+	<!-- 전체 레코드 갯수 -->
+	<select id="selelctQnaCount" resultType="Integer">
+		SELECT COUNT(QNA_NO)
+		  FROM QNA
+	</select>
+	
+	<!-- 목록 -->
+	<select id="selectQnaList" parameterType="Map" resultType="QnaDTO">
+		SELECT QNA_NO, MEMBER_ID, QNA_TITLE, QNA_CONTENT, QNA_HIT, QNA_CREATED, QNA_MODIFIED
+		  FROM QNA
+		  ORDER BY QNA_NO DESC
+		 LIMIT #{beginRecord}, #{recordPerPage}
+	</select>
+	
+
+ 	<!-- qna원글 삽입 -->
+ 	<insert id="insertQna" parameterType="QnaDTO">
+ 		INSERT INTO QNA
+ 			(MEMBER_ID, QNA_TITLE, QNA_CONTENT, QNA_HIT, QNA_CREATED ,QNA_MODIFIED)
+ 		VALUES
+ 			(#{memberId}, #{qnaTitle},#{qnaContent}, 0, NOW() ,NOW())
+ 	</insert>
+ 	<!-- 원글 수정 -->
+ 	<update id="updateQna" parameterType="QnaDTO">
+ 		UPDATE QNA
+ 		   SET QNA_CONTENT = #{qnaContent} , QNA_MODIFIED = NOW()
+ 		 WHERE QNA_NO = #{qnaNo}
+ 	</update>
+ 		
+	<!-- qna 상세보기 -->
+	<select id="selectQnaByNo" parameterType="Long" resultType="QnaDTO">
+		SELECT QNA_NO, MEMBER_ID, QNA_TITLE, QNA_CONTENT, QNA_HIT, QNA_CREATED, QNA_MODIFIED
+		  FROM QNA
+		 WHERE QNA_NO = #{qnaNo}
+	</select>
+	
+	<!-- 디테일조회수 증가 -->
+	<update id="updateQnaHit" parameterType="Long">
+		UPDATE QNA
+		   SET QNA_HIT = QNA_HIT + 2
+		 WHERE QNA_NO = #{qnaNo}
+	</update>
+	
+	<!-- 디테일조회수 이외의 조회수 그대로 만들기 -->
+	<update id="updateQnaHitnotD" parameterType="Long">
+		UPDATE QNA
+		   SET QNA_HIT = QNA_HIT - 1
+		 WHERE QNA_NO = #{qnaNo}
+	</update>
+	
+	
+	<!-- 댓글 삽입 전에 처리 -->
+	<!-- 같은 그룹의 기존 댓글의 GROUP_ORD 값 증가시키기 -->
+	<!-- parameterType="QnaDTO" : 원글의 정보 -->
+	<update id="updatPreviousReply" parameterType="QnaReplyDTO">
+		UPDATE QNA_REPLY
+		   SET QNA_REPLY_GROUP_ORD = QNA_REPLY_GROUP_ORD + 1
+		 WHERE QNA_REPLY_GROUP_NO = #{qnaReplyGroupNo}
+		   AND QNA_REPLY_GROUP_ORD > #{qnaReplyGroupOrd}
+	</update>
+	
+	<!-- 댓글 처음 삽입 -->
+	<insert id="insertQnaReply" parameterType="QnaReplyDTO">
+		<selectKey keyProperty="qnaReplyNo" order="BEFORE" resultType="Long">
+			SELECT LAST_INSERT_ID()+1
+		</selectKey>
+		INSERT INTO QNA_REPLY
+			(QNA_NO, MEMBER_ID, QNA_REPLY_CONTENT, QNA_REPLY_CREATED, QNA_REPLY_STATE, QNA_REPLY_DEPTH, QNA_REPLY_GROUP_NO, QNA_REPLY_GROUP_ORD)
+		VALUES
+			(#{qnaNo}, #{memberId}, #{qnaReplyContent}, NOW(), 1, 0, #{qnaReplyNo}, 0)
+	</insert>
+
+	<!-- 댓글 조회 -->
+	<select id="selectQnaReplyByNo" parameterType="Long" resultType="QnaReplyDTO">
+		SELECT QNA_REPLY_NO, QNA_NO, MEMBER_ID, QNA_REPLY_CONTENT, QNA_REPLY_CREATED, QNA_REPLY_STATE, QNA_REPLY_DEPTH, QNA_REPLY_GROUP_NO, QNA_REPLY_GROUP_ORD
+		  FROM QNA_REPLY
+		 WHERE QNA_NO = #{qnaNo}
+		 ORDER BY QNA_REPLY_GROUP_NO DESC,  QNA_REPLY_GROUP_ORD
+	</select>
+	
+	<!-- 댓글 2번째 이상 삽입 -->
+	<insert id="insertQnaReplySecond" parameterType="QnaReplyDTO">
+		INSERT INTO QNA_REPLY
+			(QNA_NO, MEMBER_ID, QNA_REPLY_CONTENT, QNA_REPLY_CREATED, QNA_REPLY_STATE, QNA_REPLY_DEPTH, QNA_REPLY_GROUP_NO, QNA_REPLY_GROUP_ORD)
+		VALUES
+			(#{qnaNo}, #{memberId}, #{qnaReplyContent}, NOW(), 1, #{qnaReplyDepth}, #{qnaReplyGroupNo}, #{qnaReplyGroupOrd})
+	</insert>
+	
+	<!-- 댓글 삭제 -->
+	<update id="deleteQnaReply" parameterType="Long">
+		UPDATE QNA_REPLY
+		   SET QNA_REPLY_STATE = -1
+		 WHERE QNA_REPLY_NO = #{qnaReplyNo}
+	</update>
+	<!-- 게시글 삭제할때 다 삭제 -->
+	<delete id="deleteQnaAndReply" parameterType="Long">
+		DELETE
+		  FROM QNA_REPLY
+		 WHERE QNA_NO = #{qnaNo}
+	</delete>
+	
+	<!-- 게시글 삭제 -->
+	<delete id="deleteQna" parameterType="Long">
+		DELETE
+		  FROM QNA
+		 WHERE QNA_NO = #{qnaNo}
+	</delete>
+</mapper>

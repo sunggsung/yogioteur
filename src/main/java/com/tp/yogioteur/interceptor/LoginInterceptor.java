@@ -1,5 +1,6 @@
 package com.tp.yogioteur.interceptor;
 
+import java.io.PrintWriter;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,17 +24,17 @@ public class LoginInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		
-		HttpSession session = request.getSession();
-		if(session.getAttribute("loginMember") != null) {
-			session.removeAttribute("loginMember");
-		}
-		
 		String memberId = SecurityUtils.xss(request.getParameter("memberId"));
 		
+		// 탈퇴한 회원
 		SignOutMemberDTO member = memberService.findSignOutMember(memberId);
 		if(member != null) {
-			request.setAttribute("member", member);
-			request.getRequestDispatcher("/member/reSignInPage").forward(request, response);
+			response.setContentType("text/html");
+			PrintWriter out = response.getWriter();
+			out.println("<script>");
+			out.println("alert('탈퇴된 회원입니다.')");
+			out.println("location.href='" + request.getContextPath() + "'");
+			out.println("</script>");
 			return false;
 		}
 		return true;

@@ -11,11 +11,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SockatDTO {
+public class QnaDTO {
+
 	
-	private Long soNo;
-	private String soId;
-	private String soNamd;
-	private String soContent;
-	private Date soDate;
+	private Long qnaNo;
+	private String memberId;
+	private String qnaTitle;
+	private Integer qnaHit;
+	private String qnaContent;
+	private Date qnaCreated;
+	private Date qnaModified;
+	
+	
+	
 }

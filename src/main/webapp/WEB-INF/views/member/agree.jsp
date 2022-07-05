@@ -25,12 +25,12 @@
 	}
 	.items, .item{	
 		padding-left: 20px;
-		background-image: url("../resources/image/uncheck.png");
+		background-image: url("../resources/image/unchecked.png");
 		background-size: 18px 18px;
 		background-repeat: no-repeat;
 	}
 	.check{
-		background-image: url("../resources/image/check.png");
+		background-image: url("../resources/image/checked.png");
 	}
     .box > div {
      	color: #666;
@@ -42,12 +42,15 @@
         margin-bottom: 24px;
         display: inline-block;;
       }
-
-
+	.Btn {
+		text-align: center;
+		display: block;
+		line-height: 30px;
+		margin: 0 0 20px 0;
+	}
 </style>
 <script src="../resources/js/jquery-3.6.0.js"></script>
 <script>
-
 	$(function(){
 		
 		$('#checkAll').on('click', function(){
@@ -64,7 +67,6 @@
 		
 		$('.checkOne').on('click', function(){
 			let checkAll = true;							
-
 			$.each($('.checkOne'), function(i, checkOne){
 				if($(checkOne).is(':checked') == false){	
 					$('#checkAll').prop('checked', false);
@@ -215,9 +217,10 @@
 				※위 사항에 대한 동의를 거부할 수 있으나, 이에 대한 동의가 없을 경우 개인형 맞춤 상품 안내 등 유용한 상품안내를 받아보실 수 없습니다.
 			</div>
 		</div>
-		
-		<input type="button" value="취소" onclick="history.back()">
-		<input type="submit" value="다음">
+		<div class="Btn">
+			<input type="button" value="취소" onclick="history.back()">
+			<input type="submit" value="다음">
+		</div>
 			
 	</form>
 	

@@ -4,48 +4,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.tp.yogioteur.mapper.MemberMapper">
+	<!-- 예약내역과 qna내역 불러올때 RESER_NO, QNA_NO칼럼 추가하기 -->
 	<!-- 회원가입 --> 
 	<select id="selectMemberById" parameterType="String" resultType="MemberDTO">
-	SELECT MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN, MEMBER_SESSIONID
+	SELECT MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN
 		  FROM MEMBER
 	 WHERE MEMBER_ID = #{memberId}	
 	</select>
 	
 	<select id="selectMemberByEmail" parameterType="String" resultType="MemberDTO">
-	SELECT MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN, MEMBER_SESSIONID
+	SELECT MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN
 		  FROM MEMBER
 	 WHERE MEMBER_EMAIL = #{memberEmail}	
 	</select>
 	
-	<insert id="insertMember" parameterType="MemberDTO">
+	<insert id="insertMember" parameterType="MemberDTO" useGeneratedKeys="true" keyProperty="memberNo">
 	INSERT INTO MEMBER
-			(MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN)
+			(MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN)
 		VALUES
-			(MEMBER_SEQ.NEXTVAL, #{memberId}, #{memberPw}, #{memberEmail}, #{memberName}, #{memberPhone}, #{memberBirth}, #{memberGender}, #{memberPromoAdd}, #{memberPostCode}, #{memberRoadAddr}, #{agreeState}, SYSDATE)
+			(#{memberId}, #{memberPw}, #{memberEmail}, #{memberName}, #{memberPhone}, #{memberBirth}, #{memberGender}, #{memberPromoAdd}, #{memberPostCode}, #{memberRoadAddr}, #{agreeState}, NOW())
 	</insert>
 	
 	
 	
 	<!-- 로그인 / 비밀번호 검증 -->
 	<select id="selectMemberByIdPw" parameterType="MemberDTO" resultType="MemberDTO">
-	SELECT MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN, MEMBER_SESSIONID
-		FROM MEMBER
+	SELECT MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN
+	  FROM MEMBER
 	 WHERE MEMBER_ID = #{memberId}
-	 	AND MEMBER_PW = #{memberPw}
+	   AND MEMBER_PW = #{memberPw}
 	</select>
 	
 	<insert id="insertMemberLog" parameterType="String">
-	INSERT INTO MEMBER_LOG
-		(MEMBER_LOG_NO, MEMBER_ID, SIGN_UP)
-	 VALUES
-	 	(MEMBER_LOG_SEQ.NEXTVAL, #{memberId}, TO_DATE(SYSDATE, 'yyyy-mm-dd'))
+		INSERT INTO MEMBER_LOG
+			(MEMBER_ID, SIGN_UP)
+		VALUES
+	 		(#{memberId}, DATE_FORMAT(NOW(), '%Y/%m/%d'))
 	</insert>
-	
-
 	
 	<!-- 아이디찾기 -->
 	<select id="findMemberByNameEmail" parameterType="MemberDTO" resultType="MemberDTO">
-	SELECT MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN, MEMBER_SESSIONID
+	SELECT MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN
 		  FROM MEMBER
 	  WHERE MEMBER_NAME = #{memberName}	
 	   AND MEMBER_EMAIL = #{memberEmail}
@@ -54,7 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 비밀번호 -->
 	<select id="selectMemberByIdEmail" parameterType="MemberDTO" resultType="MemberDTO">
-	SELECT MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN, MEMBER_SESSIONID
+	SELECT MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN
 	  FROM MEMBER
 	 WHERE MEMBER_ID = #{memberId}
 	   AND MEMBER_EMAIL = #{memberEmail}
@@ -84,10 +83,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 
 	<!-- 탈퇴 -->	
-	<delete id="removeMember" parameterType="String">
+	<delete id="removeMember" parameterType="MemberDTO">
 	DELETE 
 		FROM MEMBER
 	 WHERE MEMBER_ID = #{memberId}
+	  AND MEMBER_PW = #{memberPw}
 	</delete>
 	
 	<!-- 탈퇴확인 -->
@@ -104,6 +104,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 WHERE ID = #{id}
 	</delete>
 	
+	<!-- 예약내역 
+	<select id="selectReserInfo">
+	SELECT MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN
+	  FROM MEMEBER
+	 WHERE RESER_NO = #{reserNo}
+	</select>
+ 	-->
 
-	
+	<!-- qna내역 
+	<select id="selectQnaInfo">
+	SELECT MEMBER_NO, MEMBER_ID, MEMBER_PW, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PHONE, MEMBER_BIRTH, MEMBER_GENDER, MEMBER_PROMO_ADD, MEMBER_POST_CODE, MEMBER_ROAD_ADDR, AGREE_STATE, SIGN_IN
+	  FROM MEMBER
+	 WHERE QNA_NO = #{qnaNo}
+	</select>	
+	-->
+	<select id="selectNaverNo" parameterType="Map" resultType="Long">
+		SELECT NAVER_NO
+		FROM NAVER_MEMBER
+		where NAVER_ID = #{id}
+	</select>
+
+	<insert id="insertNaverMember" parameterType="Map" useGeneratedKeys="true" keyProperty="memberNo">
+	INSERT INTO NAVER_MEMBER(NAVER_ID, NAVER_NAME, NAVER_EMAIL, NAVER_PHONE)
+		VALUES (#{id}, #{name}, #{email}, #{phone})
+		 <selectKey resultType="Long" keyProperty="memberId" order="AFTER">
+	      	SELECT NAVER_NO FROM NAVER_MEMBER WHERE NAVER_ID = #{id}
+	    </selectKey>
+ 	</insert>
+ 	
+ 	<insert id="insertNaverLog" parameterType="String">
+	INSERT INTO NAVER_MEMBER_LOG
+		(NAVER_ID, NAVER_LOG_DATE)
+	 VALUES
+	 	(#{id}, DATE_FORMAT(NOW(), '%Y/%m/%d'))
+	</insert>
+
 </mapper>

@@ -26,7 +26,7 @@ public class MemberController {
 	private MemberService memberService;
 	
 	@Autowired
-	private ReservationService reservationService; //
+	private ReservationService reservationService;
 	
 	@GetMapping("/member/agreePage")
 	public String agreePage() {
@@ -64,17 +64,28 @@ public class MemberController {
 	}
 	
 
-	
-	// 로그인
-	@GetMapping("/member/loginPage")
-	public String loginPage(@RequestParam(required = false) String url, Model model) {
-		model.addAttribute("url", url);
+	// 네이버 로그인
+	// 로그인 화면 열기
+	@GetMapping(value="/member/loginPage")
+	public String loginPage(HttpServletRequest request, Model model) {
+		model.addAttribute("url", request.getParameter("url"));
+		memberService.loginPage(request, model);
 		return "member/login";
 	}
 	
+	@GetMapping(value="/member/naver/login")  // 네이버로그인 버튼을 클릭하면 code, state를 받아오는 callback url
+	public String naverLogin(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String token = memberService.getAccessToken(request, response);
+		MemberDTO loginMember = memberService.getMemberProfile(request, response, token);
+		if(loginMember != null) {
+			model.addAttribute("loginMember", loginMember);
+		} 
+		return "mainPage";
+	}
+
+	// 기존 로그인
 	@PostMapping("/member/login")
 	public void login(HttpServletRequest request, Model model) {
-		
 		MemberDTO loginMember = memberService.login(request);
 		if(loginMember != null) {
 			model.addAttribute("loginMember", loginMember);
@@ -85,11 +96,10 @@ public class MemberController {
 	// 로그아웃
 	@GetMapping("/member/logout")
 	public String logout(HttpSession session, HttpServletResponse response) { 
-
 		MemberDTO loginMember = (MemberDTO) session.getAttribute("loginMember");	
 		if (loginMember != null) {
 				session.invalidate(); 
-			}
+		}
 		return "redirect:/";
 	}
 	
@@ -125,7 +135,12 @@ public class MemberController {
 	public void findPw(HttpServletRequest request, HttpServletResponse response){
 		memberService.changePw(request, response);
 	}
-
+	
+	// 회원 탈퇴 본인인증
+	@GetMapping("/member/confirm")
+	public String confirm() {
+		return "member/confirmMember";
+	}
 	
 	// 회원 탈퇴
 	@GetMapping("/member/signOut")
@@ -141,15 +156,14 @@ public class MemberController {
 	
 	// 회원 정보
 	@GetMapping("/member/memberPage")
-	public String memberPage(HttpServletRequest request, Model model){ //
-		reservationService.reserList(request, model); //
+	public String memberPage(){
 		return "member/memberInfo";
 	}
 	@GetMapping("/member/memberInfo")
 	public String memberInfo(){
-		System.out.println();
 		return "member/memberInfo";
 	}
+	
 	// 회원 수정
 	@PostMapping("/member/modifyMember")
 	public void modifyMember(HttpServletRequest request, HttpServletResponse response){
@@ -169,16 +183,16 @@ public class MemberController {
 	}
 	
 	//예약내역
-	@GetMapping("/member/confoirmReserPage")
-	public String confoirmReserPage() {
+	@GetMapping("/member/confirmReserPage")
+	public String confirmReserPage(HttpServletRequest request, Model model) {
+		reservationService.reserList(request, model);
 		return "member/confirmReser";
 	}
-	// 문의내역REVIEW FAQ
-	@GetMapping("/member/confirmFaqPage")
-	public String confirmFaqPage() {
-		return "member/confirmFaq";
-	}
 	
-	
+//	// 문의내역(qna)
+//	@GetMapping("/member/confirmQnaPage")
+//	public String confirmFaqPage() {
+//		return "member/confirmQna";
+//	}
 	
 }

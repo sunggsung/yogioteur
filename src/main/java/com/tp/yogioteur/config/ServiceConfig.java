@@ -10,7 +10,7 @@ import com.tp.yogioteur.service.PaymentService;
 import com.tp.yogioteur.service.PaymentServiceImpl;
 import com.tp.yogioteur.service.RoomService;
 import com.tp.yogioteur.service.RoomServiceImpl;
-import com.tp.yogioteur.service.VilageFcstInfoService;
+import com.tp.yogioteur.service.TourStnInfoService;
 
 @Configuration
 public class ServiceConfig {
@@ -19,13 +19,15 @@ public class ServiceConfig {
 	public MemberService memberService() {
 		return new MemberServiceImpl();
 	}
+	
 	@Bean
 	public RoomService roomService() {
 		return new RoomServiceImpl();
 	}
+	
 	@Bean
 	public OpenAPIService openAPIService() {
-		return new VilageFcstInfoService();
+		return new TourStnInfoService();
 	}
 	@Bean
 	public PaymentService paymentService() {

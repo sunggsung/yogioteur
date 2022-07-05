@@ -1,7 +1,5 @@
 package com.tp.yogioteur.controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.tp.yogioteur.domain.RoomDTO;
 import com.tp.yogioteur.service.RoomService;
 
 @Controller
@@ -26,9 +22,8 @@ public class RoomController {
 	// 객실 조회
 	@PostMapping("/room/roomList")
 	public String roomList(HttpServletRequest request, Model model) {
-		model.addAttribute("roomList", roomService.roomList(request));
-		System.out.println(roomService.roomList(request));
-		return "room/roomList";
+		 model.addAttribute("roomList", roomService.roomList(request));
+		 return "room/roomList";
 	}
 
 	// 이미지 보여주기
@@ -38,7 +33,7 @@ public class RoomController {
 			@RequestParam(value = "type", required = false, defaultValue = "image") String type) {
 		return roomService.view(roomNo, type);
 	}
-
+	
 	// 객실 상세
 	@GetMapping("/room/detail")
 	public String detail(HttpServletRequest request, Model model) {

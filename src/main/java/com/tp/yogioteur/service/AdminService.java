@@ -17,11 +17,13 @@ public interface AdminService {
 	public ResponseEntity<byte[]> display(Long imageNo, String type);
 	public void removeRoom(HttpServletRequest request, HttpServletResponse response);
 	public void changeRoom(MultipartHttpServletRequest request, HttpServletResponse response);
+	public Map<String, Object> findRoomByStatus(int roomStatus);
 	
 	public void findMembers(HttpServletRequest request, Model model);
 	public void findMemberByNo(HttpServletRequest request, Model model);
 	
-	public void findReservations(HttpServletRequest request, Model model);
+	public Map<String, Object> findReservations();
 	public Map<String, Object> findReservationByMemberNo(HttpServletRequest request, Model model);
+	public Model findReservationByReserNo(HttpServletRequest request, Model model);
 	
 }

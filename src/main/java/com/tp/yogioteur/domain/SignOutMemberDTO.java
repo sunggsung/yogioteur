@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 public class SignOutMemberDTO {
 
 	private Long signOutNo;
-	private Long memberNo;
 	private String id;
 	private String name;
+	private Long memberNo;
 	private String email;
 	private Integer agreeState;
 	private Date signIn;

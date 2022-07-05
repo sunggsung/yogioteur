@@ -32,6 +32,7 @@
 						<td>체크인날짜</td>
 						<td>체크아웃날짜</td>
 						<td>인원수</td>
+						<td>예약상태</td>
 					</tr>
 				</thead>
 				<tbody id="reservations">
@@ -42,6 +43,14 @@
 							<td>${reservation.reserCheckin}</td>
 							<td>${reservation.reserCheckout}</td>
 							<td>${reservation.reserPeople}</td>
+							<td>
+								<select name="reserStatus" id="reserStatus">
+									<option value="1">예약대기</option>
+									<option value="2">결제대기</option>
+									<option value="3">예약완료</option>
+								</select>
+								<input type="button" value="확인" id="btnSelect">
+							</td>
 						</tr>
 					</c:forEach>
 				</tbody>

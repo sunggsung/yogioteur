@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class NonMemberDTO {
 	private Long nonNo;
-	private Long nonReserNo;
-	private String nonPhone;
+	private String nonId;
 	private String nonName;
+	private String nonPhone;
+	private String nonBirth;
 }

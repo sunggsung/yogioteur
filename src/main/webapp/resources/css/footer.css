@@ -1,0 +1,51 @@
+@charset "UTF-8";
+	
+	body{
+			margin: 0;
+			font-family: 'Kdam Thmor Pro', sans-serif;
+		}
+		
+	a{
+		text-decoration: none;
+		color: white;
+	}	
+		
+	ul {
+		 
+		 list-style:none;
+		 text-align: left;
+	}
+	
+	li{
+		
+		float: left;
+		margin-left: 10px;
+		margin-top: 3px;
+		
+	
+	}
+	
+	nav {
+		  float: right;
+		}
+	
+	
+	.footer{
+		background-color: silver;
+		height: 170px;
+	
+	}
+	
+	.end_title{
+		font-size: 20px;
+		width: 1200px;
+		margin: 0 auto;
+		color: white;
+		
+	}
+	
+	.info{
+		
+		display: block;
+	
+	}

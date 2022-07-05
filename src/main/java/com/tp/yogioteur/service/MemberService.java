@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.tp.yogioteur.domain.MemberDTO;
 import com.tp.yogioteur.domain.SignOutMemberDTO;
@@ -37,7 +36,8 @@ public interface MemberService {
 	// 탈퇴확인
 	public SignOutMemberDTO findSignOutMember(String memberId);
 	
-	// 비밀번호 확인
-	public MemberDTO pwCheck(HttpServletRequest request, HttpServletResponse response);
-	
+	// 네이버api
+	public void loginPage(HttpServletRequest request, Model model);
+	public String getAccessToken(HttpServletRequest request, HttpServletResponse response);
+	public MemberDTO getMemberProfile(HttpServletRequest request, HttpServletResponse response, String token);
 }

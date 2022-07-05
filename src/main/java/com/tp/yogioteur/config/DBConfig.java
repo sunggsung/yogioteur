@@ -35,7 +35,6 @@ public class DBConfig {
 	@Value(value="${hikariConfig.username}") private String username;
 	@Value(value="${hikariConfig.password}") private String password;
 	
-	
 	// HikariCP 환경 설정
 	@Bean
 	public HikariConfig hikariConfig() {

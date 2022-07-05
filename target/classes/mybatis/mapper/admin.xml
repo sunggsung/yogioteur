@@ -5,21 +5,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="com.tp.yogioteur.mapper.AdminMapper">
 
-	<insert id="insertRoom" parameterType="RoomDTO">
-		<selectKey keyProperty="roomNo" resultType="Long" order="BEFORE">
-			SELECT ROOM_SEQ.NEXTVAL
-			  FROM DUAL
-		</selectKey>
+	<insert id="insertRoom" parameterType="RoomDTO" useGeneratedKeys="true" keyProperty="roomNo">
 		INSERT INTO ROOM
-			(ROOM_NO, RT_NO, ROOM_NAME, ROOM_STATUS, ROOM_CHECKIN, ROOM_CHECKOUT, ROOM_PRICE)
+			(RT_NO, ROOM_NAME, ROOM_STATUS, ROOM_CHECKIN, ROOM_CHECKOUT, ROOM_PRICE)
 		VALUES
-			(#{roomNo}, #{rtNo}, #{roomName}, #{roomStatus}, SYSDATE, #{roomCheckOut}, #{roomPrice})
+			(#{rtNo}, #{roomName}, #{roomStatus}, NOW(), #{roomCheckOut}, #{roomPrice})
 	</insert>
-	<insert id="insertImage" parameterType="ImageDTO">
+	<insert id="insertImage" parameterType="ImageDTO" useGeneratedKeys="true" keyProperty="imageNo">
 		INSERT INTO IMAGE
-			(IMAGE_NO, ROOM_NO, IMAGE_PATH, IMAGE_SAVED, IMAGE_ORIGIN)
+			(ROOM_NO, IMAGE_PATH, IMAGE_SAVED, IMAGE_ORIGIN)
 		VALUES
-			(IMAGE_SEQ.NEXTVAL, #{roomNo}, #{imagePath}, #{imageSaved}, #{imageOrigin})
+			(#{roomNo}, #{imagePath}, #{imageSaved}, #{imageOrigin})
 	</insert>
 	
 	<resultMap type="RoomTypeDTO" id="RoomTypeMap">
@@ -28,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="RT_MAX" property="rtMax"/>
 	</resultMap>
 	
-	<resultMap type="RoomDTO" id="RoomDTOMap">
+	<resultMap type="RoomDTO" id="RoomMap">
 		<id column="ROOM_NO" property="roomNo"/>
 		<result column="RT_NO" property="rtNo"/>
 		<result column="ROOM_NAME" property="roomName"/>
@@ -39,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<collection property="roomTypeDTO" resultMap="RoomTypeMap"/>
 	</resultMap>
 	
-	<select id="selectRoomList" parameterType="Map" resultMap="RoomDTOMap">
+	<select id="selectRoomList" parameterType="Map" resultMap="RoomMap">
 		SELECT A.ROOM_NO, A.RT_NO, A.ROOM_NAME, A.ROOM_STATUS, A.ROOM_CHECKIN, A.ROOM_CHECKOUT, A.ROOM_PRICE, A.RT_TYPE, A.RT_MAX
 	      FROM (SELECT ROW_NUMBER() OVER(ORDER BY R.ROOM_NO DESC) AS ROW_NUM, R.ROOM_NO, R.RT_NO, R.ROOM_NAME, R.ROOM_STATUS, R.ROOM_CHECKIN, R.ROOM_CHECKOUT, R.ROOM_PRICE, T.RT_TYPE, T.RT_MAX
 			      FROM ROOM R INNER JOIN ROOM_TYPE T
@@ -52,7 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		  FROM ROOM
 	</select>
 	
-	<select id="selectRoomByNo" parameterType="Long" resultMap="RoomDTOMap">
+	<select id="selectRoomByNo" parameterType="Long" resultMap="RoomMap">
 		SELECT R.ROOM_NO, R.RT_NO, R.ROOM_NAME, R.ROOM_STATUS, R.ROOM_CHECKIN, R.ROOM_CHECKOUT, R.ROOM_PRICE, T.RT_TYPE, T.RT_MAX
 		  FROM ROOM R INNER JOIN ROOM_TYPE T
 			ON R.RT_NO = T.RT_NO
@@ -93,6 +89,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 WHERE IMAGE_NO = #{imageNo}
 	</update>
 	
+	<select id="selectRoomByStatus" parameterType="Integer" resultMap="RoomMap">
+		SELECT R.ROOM_NO, R.RT_NO, R.ROOM_NAME, R.ROOM_STATUS, R.ROOM_CHECKIN, R.ROOM_CHECKOUT, R.ROOM_PRICE, T.RT_TYPE, T.RT_MAX
+		  FROM ROOM R INNER JOIN ROOM_TYPE T
+			ON R.RT_NO = T.RT_NO
+		 WHERE R.ROOM_STATUS = #{roomStatus}
+	</select>
+	
 	
 	<select id="selectMemberList" parameterType="Map" resultType="MemberDTO">
 		SELECT A.MEMBER_NO, A.MEMBER_NAME, A.MEMBER_EMAIL, A.MEMBER_ID, A.MEMBER_PHONE, A.MEMBER_BIRTH, A.SIGN_IN
@@ -113,7 +116,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="selectReservationList" resultType="ReservationDTO">
-		SELECT RESER_NO, MEMBER_NO, ROOM_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE
+		SELECT RESER_NO, MEMBER_NO, ROOM_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE, RESER_STATUS
 		  FROM RESERVATION
 		 ORDER BY RESER_NO DESC
 	</select>
@@ -123,10 +126,44 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		  FROM RESERVATION
 	</select>
 	
+	<resultMap type="MemberDTO" id="MemberMap">
+		<id column="MEMBER_NO" property="memberNo"/>
+		<result column="MEMBER_NAME" property="memberName"/>
+		<result column="MEMBER_ID" property="memberId"/>
+		<result column="MEMBER_PHONE" property="memberPhone"/>
+	</resultMap>
+	
+	<resultMap type="ReservationDTO" id="ReservationMap">
+		<id column="RESER_NO" property="reserNo"/>
+		<result column="RESER_CHECKIN" property="reserCheckin"/>
+		<result column="RESER_CHECKOUT" property="reserCheckout"/>
+		<result column="RESER_STATUS" property="reserStatus"/>
+		<result column="RESER_PEOPLE" property="reserPeople"/>
+		<result column="RESER_FOOD" property="reserFood"/>
+		<collection property="room" resultMap="RoomMap"/>
+		<collection property="member" resultMap="MemberMap"/>
+	</resultMap>
+	
 	<select id="selectReservationByMemberNo" parameterType="Long" resultType="ReservationDTO">
-		SELECT RESER_NO, MEMBER_NO, ROOM_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE
+		SELECT RESER_NO, MEMBER_NO, ROOM_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE, RESER_STATUS, RESER_FOOD
 		  FROM RESERVATION
 		 WHERE MEMBER_NO = #{memberNo}
 	</select>
+	
+	<select id="selectReservationByReserNo" parameterType="Long" resultMap="ReservationMap">
+		SELECT R.RESER_NO, R.RESER_CHECKIN, R.RESER_CHECKOUT, R.RESER_PEOPLE, R.RESER_STATUS, R.RESER_FOOD
+			 , M.MEMBER_NO, M.MEMBER_NAME, M.MEMBER_ID, M.MEMBER_PHONE
+			 , RO.ROOM_NO, RO.ROOM_NAME, RO.ROOM_PRICE
+		  FROM RESERVATION R INNER JOIN MEMBER M ON (R.MEMBER_NO = M.MEMBER_NO)
+		  					 INNER JOIN ROOM RO ON (R.ROOM_NO = RO.ROOM_NO)
+		 WHERE R.RESER_NO = #{reserNo}
+	</select>
+	
+	<insert id="insertNonMember" parameterType="NonMemberDTO">
+		INSERT INTO NONMEMBER
+			(NON_NO, NON_ID, NON_NAME, NON_PHONE, NON_BIRTH)
+		VALUES
+			(NONMEMBER_SEQ.NEXTVAL, #{nonId}, #{nonName}, #{nonPhone}, #{nonBirth})
+	</insert>
 	
 </mapper>

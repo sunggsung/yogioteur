@@ -23,4 +23,8 @@ public interface RoomMapper {
 	//이미지 보여주기
 	public ImageDTO selectImageByNo(Long roomNo);
 	
+	/*
+	 * //상세 이미지 public ImageDTO detailImageByNo(Long imageNo);
+	 */
+	
 }

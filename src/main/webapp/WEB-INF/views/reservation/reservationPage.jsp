@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+	<%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
@@ -15,7 +15,6 @@
 		$('#total_price').attr('value', $('#room_price').val());
 		$('#hidden_price').attr('value', $('#room_price').val());
 		tipVal();
-		
 	})
 	function fnPayment() {
 		if($('#adult').val() == 0) {
@@ -39,7 +38,7 @@
 	function tipVal() {
 		let roomPr = $('#room_price').val();
 		let tip = (roomPr / 10);
-		$('#tip_price').attr('value', tip);
+		$('#tip_price').attr('value', Math.round(tip));
 	}
 	function count(type) {
 		const cntFood1 = document.getElementById('food1');
@@ -63,7 +62,7 @@
 		let hidden = cntHidden.value;
 		
 		let foodPrice = 50000;
-		let cntMax = 4;
+		let cntMax = cntAdult.value;;
 
 		/* if(tipPr != null) {
 			$('#tip_price').val('0');
@@ -72,7 +71,7 @@
 			food1 = parseInt(food1) + 1;
 			sumVal = parseInt(food1) * foodPrice;
 			hidden = parseInt(hidden) + foodPrice;
-			total = parseInt(total) + foodPrice;
+			total = parseInt(hidden) + (parseInt(hidden) / 10);
 			if(cntFood1.value == cntMax) {
 				return false;
 			}
@@ -81,7 +80,7 @@
 				food1 = parseInt(food1) - 1;
 				sumVal = parseInt(sumVal) - foodPrice;
 				hidden = parseInt(hidden) - foodPrice;
-				total = parseInt(total) - foodPrice;
+				total = parseInt(hidden) + (parseInt(hidden) / 10);
 			} else if(cntFood1.value == 0){
 				return false;
 			}
@@ -92,9 +91,9 @@
 		$('#food1').attr('value', food1);
 		$('#food2').attr('value', food1);
 		$('#sum').attr('value', sumVal);
-		$('#total_price').attr('value', total);
+		$('#total_price').attr('value', Math.round(total));
 		$('#hidden_price').attr('value', hidden);
-		$('#tip_price').attr('value', tip);
+		$('#tip_price').attr('value', Math.round(tip));
 		
 		if(type == 'plus2') {
 			adult = parseInt(adult) + 1;
@@ -129,7 +128,7 @@
 	function paymentData() {
 		const data = {
 				merchant : $('#resReserNo').val(),
-				roomName : $('#resRoomNo').val(),
+				roomName : $('#resRoomName').val(),
 				amount : $('#total_price').val(),
 				userEmail : $('#userEmail').val(),
 				userName : $('#userName').val(),
@@ -363,7 +362,7 @@
 						객실 요금
 					</div>
 					<div class="room_price2">
-						<span>2022년 06월 28일</span><span id="krw"><input type="text" id="room_price" name="roomPrice" size="6" value="475000" style="border:none;border:0px" readonly> KRW</span> 
+						<span>2022년 06월 28일</span><span id="krw"><input type="text" id="room_price" name="roomPrice" size="6" value="${roomInfo.roomPrice}" style="border:none;border:0px" readonly> KRW</span> 
 					</div>
 					<div class="option_price">
 						옵션 요금

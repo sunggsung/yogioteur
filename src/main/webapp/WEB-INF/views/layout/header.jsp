@@ -77,9 +77,9 @@
 		 
 		<div class="header2">
 			<!-- 로그인 이전 -->
-			<c:if test="${loginMember eq null}">
+			<c:if test="${loginMember eq null and nonMember eq null}">
 				<a href ="${contextPath}/member/loginPage">로그인</a>
-				<a href ="${contextPath}/member/agreePage">회원가입</a>			
+				<a href ="${contextPath}/member/agreePage">회원가입</a>	
 			</c:if>
 		
 			<!-- 로그인 이후 -->
@@ -89,7 +89,14 @@
 				<a href ="${contextPath}/member/memberPage">마이페이지</a>		
 			</c:if>
 			
-			<a href="${contextPath}/admin/index">관리자페이지</a>
+			<c:if test="${nonMember ne null}">
+				${nonMember.nonId}
+				<a href ="${contextPath}/member/logout">로그아웃</a>
+			</c:if>
+			
+			<c:if test="${loginMember ne null and loginMember.memberId eq 'admin12'}">
+				<a href="${contextPath}/admin/adminPage">관리자페이지</a>
+			</c:if>
 		</div>
 		
 	</div>

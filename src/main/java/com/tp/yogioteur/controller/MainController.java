@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MainController {
 	
-	
 	@GetMapping("/")
 	public String index() {
 		return "mainPage";
@@ -27,6 +26,6 @@ public class MainController {
 	public String reviewPage() {
 		return "review/reviewList";
 	}
-	 
-	
+
+
 }

@@ -6,18 +6,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.tp.yogioteur.mapper.ReviewReplyMapper">
 
 	<!-- 댓글 목록 -->
-	<select id="selectReviewReplyList" parameterType="Long" resultType="ReviewReplyDTO">
-		SELELCT REPLY_NO, REVIEW_NO, REPLY_CONTENT, REPLY_CREATED
-		  FROM REVEIW_REPLY
-		 WHERE REVIEW_NO = #{reviewNo}
+	<select id="selectReviewReplyList" resultType="ReviewReplyDTO">
+		SELECT REPLY_NO, REVIEW_NO, REPLY_CONTENT, REPLY_CREATED, REPLY_MODIFIED
+		  FROM REVIEW_REPLY
 	</select>
 	
 	<!-- 댓글 추가 -->
 	<insert id="insertReviewReply" parameterType="ReviewReplyDTO">
-		INSERT INTO
-			(REPLY_NO, REVIEW_NO, REPLY_CONTENT, REPLY_CREATED)
+		INSERT INTO REVIEW_REPLY
+			(REVIEW_NO, REPLY_CONTENT, REPLY_CREATED, REPLY_MODIFIED)
 		VALUES
-			(REVIEW_REPLY_NO_SEQ, #{reviewNo}, #{reviewContent}, SYSDATE)
+			(#{reviewNo}, #{replyContent}, NOW(), NOW())
 	</insert>
 	
 	<!-- 댓글 삭제 -->
@@ -26,5 +25,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		  FROM REVIEW_REPLY
 		 WHERE REPLY_NO = #{replyNo}
 	</delete>
+	
+	<!-- 하나의 리뷰글에 달리 댓글 -->
+	<select id="selectReplyByNo" parameterType="Long" resultType="ReviewReplyDTO">
+		SELECT REPLY_NO, REVIEW_NO, REPLY_CONTENT, REPLY_CREATED, REPLY_MODIFIED
+		  FROM REVIEW_REPLY
+		 WHERE REPLY_NO = #{replyNo}
+	</select>
+	
+	<!-- 댓글 수정 -->
+	<update id="updateReply" parameterType="ReviewReplyDTO">
+		UPDATE REVIEW_REPLY
+		   SET REPLY_CONTENT = #{replyContent} , REPLY_MODIFIED = NOW()
+		 WHERE REPLY_NO = #{replyNo}
+	</update>
 	
 </mapper>

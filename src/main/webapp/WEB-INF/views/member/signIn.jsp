@@ -16,6 +16,65 @@
 	.dont {
 		color: red;
 	}
+	.signIn {
+		text-align: center;
+	}
+	.join_container {
+		margin: 0 auto;
+		width: 460px;
+		box-sizing: border-box;
+	}
+	.title {
+		margin: 19px 0 8px;
+		font-size: 16px;
+		font-weight: 800;
+	}
+	label {
+		cursor: pointer;
+	}
+	. InputAreaWrapper {
+		margin-bottom: 10px;
+	}
+	.InputArea {
+		display: block;
+		position: relative;
+		margin: 0;
+		width: 100%;
+		height: 51px;
+		border: solid 1px #dadada;
+		padding: 10px 110px 10px 14px;
+		box-sizing: border-box;
+		vertical-align: top;
+	}
+	.InputArea_con {
+		display: block;
+		position: relative;
+		width: 100%;
+		height: 80px;
+		border: solid 1px #dadada;
+		padding: 10px 110px 10px 14px;
+		box-sizing: border-box;
+		vertical-align: top;
+	}
+	.box {
+		border: 0 none;
+		display: block;
+		width: 100%;
+		height: 30px;
+		outline: none;
+	}
+	.boxes {
+		height: 20px;
+		width: 60%;
+		border: solid 1px #dadada;
+		outline: none;
+	}
+	.BtnArea {
+		text-align: center;
+		display: block;
+		line-height: 30px;
+		margin: 20px 0;
+	}
 </style>
 <script src="../resources/js/jquery-3.6.0.js"></script>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -81,7 +140,7 @@
 	let phonePass = false;
 	function fnPhoneCheck(){
 		$('#memberPhone').on('keyup', function(){
-			let regPhone = /^[0-9]{1,11}$/;
+			let regPhone = /^[0-9]{11}$/;
 			if(regPhone.test($('#memberPhone').val())==false){
 				$('#memberPhoneMsg').text('전화번호는 -없이 숫자로만 입력해주세요.').addClass('dont').removeClass('ok');
 				phonePass = false;
@@ -144,6 +203,7 @@
 						data: 'memberEmail=' + $('#memberEmail').val(),
 						dataType: 'json',
 						success: function(obj){  
+							$('#memberEmailMsg').text('사용 가능한 이메일입니다.').addClass('ok').removeClass('dont');;
 							alert('인증코드를 발송했습니다. 이메일을 확인해주세요.');
 							fnVerifyAuthCode(obj.authCode);  
 						},
@@ -187,7 +247,7 @@
 		$('#memberPw').on('keyup', function(){
 			let regPw = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,12}$/; 
 			if(regPw.test($('#memberPw').val())==false){
-				$('#memberPwMsg').text('영문 소문자, 숫자, 특수문자 포함 8~12자로 입력해주세요.').addClass('dont').removeClass('ok');
+				$('#memberPwMsg').text('8~12자 영문 소문자, 숫자, 특수문자 모두포함으로만 가능합니다.').addClass('dont').removeClass('ok');
 				pwPass = false;
 			} else {
 				$('#memberPwMsg').text('사용 가능한 비밀번호입니다.').addClass('ok').removeClass('dont');
@@ -202,9 +262,9 @@
 	function fnIdCheck(){
 		$('#memberId').on('keyup', function(){
 			// 정규식 
-			let regId = /^(?=.*[0-9]+)[a-zA-Z][a-zA-Z0-9]{5,12}$/; 
+			let regId = /^(?=.*[0-9]+)[a-zA-Z][a-zA-Z0-9]{5,11}$/; 
 			if(regId.test($('#memberId').val())==false){
-				$('#memberIdMsg').text('아이디는 영문 대소문자,숫자 포함 6~12자리로 입력해주세요.').addClass('dont').removeClass('ok');
+				$('#memberIdMsg').text('6~12자리 영문,숫자만 사용가능합니다.').addClass('dont').removeClass('ok');
 				idPass = false;
 				return;
 			}
@@ -216,7 +276,7 @@
 				dataType: 'json',
 				success: function(obj){
 					if(obj.res == null){
-						$('#memberIdMsg').text('사용가능한 아이디입니다.').addClass('ok').removeClass('dont');
+						$('#memberIdMsg').text('사용 가능한 아이디입니다.').addClass('ok').removeClass('dont');
 						idPass = true;
 					} else {
 						$('#memberIdMsg').text('이미 사용중이거나 탈퇴한 아이디입니다.').addClass('dont').removeClass('ok');
@@ -235,10 +295,8 @@
         new daum.Postcode({
             oncomplete: function(data) {
                 var roadAddr = data.roadAddress; 
-
-                $('#memberPostcode').val(data.zonecode);
-                $('#memberRoadAddress').val(roadAddr);
-                
+	                $('#memberPostcode').val(data.zonecode);
+	                $('#memberRoadAddress').val(roadAddr);
             }
         }).open();
     }
@@ -247,86 +305,131 @@
 <body>
 	
 	
-	<h3>회원가입</h3>
+	<h2 class="signIn" >회원가입</h2>
 	<hr>
 	
-	<form id="SignInform" action="${contextPath}/member/signIn" method="post">
-	
-		<input type="hidden" name="info" value="${agreements[0]}">
-		<input type="hidden" name="event" value="${agreements[1]}">
+	<div class="join_container">
+		<form id="SignInform" action="${contextPath}/member/signIn" method="post">
 		
-		<label for="memberId">
-			아이디<br>
-			<input type="text" name="memberId" id="memberId" placeholder="사용할 아이디를 입력하세요"><br>
-			<span id="memberIdMsg"></span>
-		</label><br>
-		
-		<label for="memberPw">
-			비밀번호<br>
-			<input type="password" name="memberPw" id="memberPw" placeholder="비밀번호를 입력하세요"><br>
-			<span id="memberPwMsg"></span>
-		</label><br>
-
-		<label for="memberPwConfirm">
-			비밀번호 재확인<br>
-			<input type="password" id="memberPwConfirm" placeholder="한번 더 같은 비밀번호를 입력하세요"><br>
-			<span id="memberPwConfirmMsg"></span>
-		</label><br>
-		
-		<label for="memberName">
-			이름<br>
-			<input type="text" name="memberName" id="memberName" placeholder="이름"><br>
-		</label><br>
-		
-		<label for="memberPhone">
-			연락처<br>
-			<input type="text" name="memberPhone" id="memberPhone" placeholder="전화번호는 하이픈(-)을 제외한 숫자만 입력해주세요"><br>
-			<span id="memberPhoneMsg"></span>
-		</label><br>
-		
-		<label for="memberBirth">
-			생년월일<br>
-			<input type="text" name="memberBirth" id="memberBirth" placeholder="생년월일(6자)을 입력하세요"><br>
-			<span id="memberBirthMsg"></span>
-		</label><br>
-		
-		<label for="memberGender">
-			성별<br>
-			<input type="radio" name="memberGender" id="male" value="male">남
-			<input type="radio" name="memberGender" id="female" value="female">여
-		</label>
-		<br><br>
-		
-		<div>
-			주소<br>
-			<input type="text" id="memberPostcode" name="memberPostCode" placeholder="우편번호">
-			<input type="button" onclick="fnPostcode()" value="우편번호 찾기"><br>
-			<input type="text" id="memberRoadAddress" name="memberRoadAddr" placeholder="도로명주소">
-		</div>
-		<br>
-		
-		<label for="memberEmail">
-			이메일<br>
-			<input type="text" name="memberEmail" id="memberEmail" placeholder="사용할 이메일을 입력하세요">
-			<input type="button" value="인증번호받기" id="btnGetAuthCode"><br>
-			<span id="memberEmailMsg"></span><br>
-			<input type="text" name="authCode" id="authCode" placeholder="인증코드를 입력하세요">
-			<input type="button" value="인증하기" id="btnVerifyAuthCode"><br><br>
-		</label>
-		
-		
-		<label for="memberPromoAdd">
-			이메일 수신여부<br>
-			<input type="radio" name="memberPromoAdd" value="yes" id="agree_yes">
-            <label for="agree_yes">동의함</label>
-            <input type="radio" name="memberPromoAdd" value="no" id="agree_no">
-            <label for="agree_no">동의안함</label>
-		</label>
-		<br><br>
-		
-		<button>가입하기</button>
-		<input type="button" value="취소하기" onclick="location.href='${contextPath}'"> 
-	</form>
+			<input type="hidden" name="info" value="${agreements[0]}">
+			<input type="hidden" name="event" value="${agreements[1]}">
+			<div class="group">
+				<div class="InputAreaWapper">
+					<h4 class="title">
+						<label for="memberId">아이디</label>
+					</h4>
+						<div class="InputArea">
+							<input type="text" name="memberId" id="memberId" class="box" placeholder="6~12자 영문,숫자">
+						</div>
+						<span id="memberIdMsg"></span>
+				</div>
+				
+				<div class="InputAreaWapper">
+					<h4 class="title">
+						<label for="memberPw">비밀번호</label>
+					</h4>
+						<div class="InputArea">
+							<input type="password" name="memberPw" id="memberPw" class="box" placeholder="8~12자 영문 소문자, 숫자, 특수문자">
+						</div>
+						<span id="memberPwMsg"></span>
+				</div>
+				
+				<div class="InputAreaWapper">
+					<h4 class="title">
+						<label for="memberPwConfirm">비밀번호 재확인</label>
+					</h4>
+						<div class="InputArea">
+							<input type="password" id="memberPwConfirm" class="box" placeholder="8~12자 영문 소문자, 숫자, 특수문자">
+						</div>
+						<span id="memberPwConfirmMsg"></span>
+				</div>
+				
+				<div class="InputAreaWapper">
+					<h4 class="title">
+						<label for="memberName">이름</label>
+					</h4>
+						<div class="InputArea">
+							<input type="text" name="memberName" id="memberName" class="box" placeholder="이름">
+						</div>
+				</div>
+				
+				<div class="InputAreaWapper">
+					<h4 class="title">
+						<label for="memberPhone">연락처</label>
+					</h4>	
+						<div class="InputArea">
+							<input type="text" name="memberPhone" id="memberPhone" class="box" placeholder="하이픈(-)을 제외한 숫자만 입력" maxlength="11">
+						</div>
+						<span id="memberPhoneMsg"></span>
+				</div>
+				
+				<div class="InputAreaWapper">
+					<h4 class="title">
+						<label for="memberBirth">생년월일</label>
+					</h4>	
+						<div class="InputArea">
+							<input type="text" name="memberBirth" id="memberBirth" class="box" placeholder="생년월일(6자)" maxlength="6">
+						</div>
+						<span id="memberBirthMsg"></span>
+				</div>
+				
+				<div class="InputAreaWapper">
+					<h4 class="title">
+						<label for="memberGender">성별</label>
+					</h4>	
+						<div class="InputArea">
+							<input type="radio" name="memberGender" id="male" value="male">
+							<label for="male" >Male</label>
+							<input type="radio" name="memberGender" id="female" value="female">
+							<label for="female" >Female</label>
+						</div>
+				</div>
+				
+				<div class="InputAreaWapper">
+					<h4 class="title">
+						주소
+					</h4>	
+						<div class="InputArea_con">
+							<input type="text" name="memberPostCode" id="memberPostcode" class="boxes" placeholder="우편번호">
+							<input type="button" onclick="fnPostcode()" value="우편번호 찾기">
+							<input type="text" name="memberRoadAddr" id="memberRoadAddress" class="boxes"  placeholder="도로명주소">
+						</div>
+				</div>
+				
+				<div class="InputAreaWapper_con">
+					<h4 class="title">
+						<label for="memberEmail">이메일</label>
+					</h4>	
+						<div class="InputArea">
+							<input type="text" name="memberEmail" id="memberEmail" class="boxes" placeholder="이메일">
+							<input type="button" id="btnGetAuthCode" value="인증번호받기">
+						</div>
+							<span id="memberEmailMsg"></span><br>
+						<div class="InputArea">
+							<input type="text" name="authCode" id="authCode" class="boxes" placeholder="인증코드를 입력하세요">
+							<input type="button" value="인증하기" id="btnVerifyAuthCode">
+						</div>
+				</div>
+				
+				<div class="InputAreaWapper">
+					<h4 class="title">
+						<label for="memberPromoAdd">이메일 수신여부</label>
+					</h4>	
+						<div class="InputArea">
+							<input type="radio" name="memberPromoAdd" id="agree_yes" value="yes">
+							<label for="agree_yes">동의함</label>
+							<input type="radio" name="memberPromoAdd" id="agree_no" value="no">
+							<label for="agree_no">동의안함</label>
+						</div>
+				</div>
+			</div>
+			
+			<div class="BtnArea">
+				<input type="button" value="취소" onclick="location.href='${contextPath}/'"> 
+				<button>확인</button>
+			</div>
+		</form>
+	</div>
 
 	<jsp:include page="../layout/footer.jsp"></jsp:include>
 

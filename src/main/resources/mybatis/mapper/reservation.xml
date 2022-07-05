@@ -7,18 +7,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<insert id="reservationInsert" parameterType="ReservationDTO">
 		INSERT INTO RESERVATION
-			(RESER_NO, MEMBER_NO, ROOM_NO, NON_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE, RESER_FOOD, RESER_STATUS, RESER_REQUEST)
+			(RESER_NO, MEMBER_NO, ROOM_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE, RESER_FOOD, RESER_STATUS, RESER_REQUEST)
 		VALUES
-			(#{reserNo}, #{memberNo}, #{roomNo}, #{nonNo}, SYSDATE, SYSDATE, #{reserPeople}, #{reserFood}, #{reserStatus}, #{reserRequest})
+			(#{reserNo}, #{memberNo}, #{roomNo}, #{reserCheckIn}, #{reserCheckOut}, #{reserPeople}, #{reserFood}, #{reserStatus}, #{reserRequest})
 	</insert>
 	
 	<select id="reservationSelect" resultType="ReservationDTO">
-		SELECT RESER_NO, MEMBER_NO, ROOM_NO, NON_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE, RESER_FOOD, RESER_STATUS, RESER_REQUEST
+		SELECT RESER_NO, MEMBER_NO, ROOM_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE, RESER_FOOD, RESER_STATUS, RESER_REQUEST
 		  FROM RESERVATION
 	</select>
 	
 	<select id="reservationSelectConfirm" parameterType="String" resultType="ReservationDTO">
-		SELECT RESER_NO, MEMBER_NO, ROOM_NO, NON_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE, RESER_FOOD, RESER_STATUS, RESER_REQUEST
+		SELECT RESER_NO, MEMBER_NO, ROOM_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE, RESER_FOOD, RESER_STATUS, RESER_REQUEST
 		  FROM RESERVATION
 		 WHERE RESER_NO = #{reserNo}
 	</select>
@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="reservationMemberSelectConfirm" parameterType="Long" resultType="ReservationDTO">
-		SELECT RESER_NO, MEMBER_NO, ROOM_NO, NON_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE, RESER_FOOD, RESER_STATUS, RESER_REQUEST
+		SELECT RESER_NO, MEMBER_NO, ROOM_NO, RESER_CHECKIN, RESER_CHECKOUT, RESER_PEOPLE, RESER_FOOD, RESER_STATUS, RESER_REQUEST
 		  FROM RESERVATION
 		 WHERE MEMBER_NO = #{memberNo}
 	</select>
@@ -51,8 +51,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<delete id="deleteReservation" parameterType="String"> 
 		DELETE 
 		  FROM RESERVATION 
-		 WHERE RESER_NO = #{resNo} 
+		 WHERE RESER_NO = #{dNo} 
 	</delete>
+	
+	<update id="updateReservation" parameterType="ReservationDTO"> 
+		UPDATE RESERVATION 
+		   SET RESER_STATUS = #{reserStatus} 
+		 WHERE RESER_NO = #{reserNo} 
+	</update>
 	
 	<delete id="deletePayments" parameterType="String"> 
 		DELETE 

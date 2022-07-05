@@ -15,7 +15,7 @@ public interface ReviewService {
 		
 		
 		// 사진 목록(사진보기)
-		public ResponseEntity<byte[]> display(Long reviewNo, String type);
+		public ResponseEntity<byte[]> display(Long reImageNo, String type);
 		
 		
 		// 리뷰 삽입
@@ -24,4 +24,14 @@ public interface ReviewService {
 		// 리뷰 삭제
 		public void removeReview(HttpServletRequest request, HttpServletResponse response);
 	
+		// 리뷰 하나
+		public void ReviewOne(Long reviewNo, Model medel);
+		
+		// 첨부 파일 삭제
+		public void removeReImage(Long reImageNo);
+		
+		// 리뷰 수정
+		public void changeReview(MultipartHttpServletRequest multipartRequest, HttpServletResponse response);
+		
+		
 }

@@ -26,7 +26,6 @@ public class MemberDTO {
 	private String memberRoadAddr;
 	private Integer agreeState;
 	private Date signIn;
-	private String memberSessionId;
 
 	
 }

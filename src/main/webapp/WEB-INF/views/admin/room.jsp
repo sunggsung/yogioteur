@@ -7,30 +7,41 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-
 <script src="../resources/js/jquery-3.6.0.js"></script>
 <script>
 	
 	$(function(){
 		fnRoomDetail();
+		$('#roomStatus').on('change', function() {
+			if($('#roomStatus').val() != '') {
+				fnSelectSatus($('#roomStatus').val());
+			} else {
+				fnReset();
+			}
+		})
 	})
+	
 	var page = 1;
-	/* function fnFindRoomList() {
+	// 예약상태(0, 1)로 분류
+	function fnSelectSatus(status) {
 		$.ajax({
-			url: '${contextPath}/room/findRooms',
+			url: '${contextPath}/admin/findRoomByStatus',
+			data: 'roomStatus=' + status,
 			type: 'GET',
 			success: function(obj) {
 				$('#rooms').empty();
+				$('#tfoot').empty();
+				console.log(obj.rooms);
 				$.each(obj.rooms, function(i, room) {
 					var tr = '<tr>';
 					tr += '<td>' + room.roomNo + '</td>';
 					tr += '<td>' + room.roomName + '</td>';
-					tr += '<td>' + room.roomTypeDTO.rtType + '</td>';
+					tr += '<td class="type' + room.roomTypeDTO.rtNo + '">' + room.roomTypeDTO.rtType + '</td>';
 					tr += '<td>' + room.roomPrice + '</td>';
 					if(room.roomStatus == 0) {
-						tr += '<td>가능</td>';
+						tr += '<td>예약가능</td>';
 					} else {
-						tr += '<td>불가</td>';
+						tr += '<td>예약불가</td>';
 					}
 					tr += '<td><input type="button" value="상세보기" class="btnDetail" data-room_no="' + room.roomNo + '"></td>';
 					tr += '</tr>';
@@ -38,15 +49,32 @@
 				})
 			}
 		})
-	} */
+	}
 	function fnRoomDetail() {
-		$('.btnDetail').on('click', function() {
+		$(document).on('click', '.btnDetail', function() {
 			location.href='${contextPath}/admin/roomDetail?roomNo=' + $(this).data('room_no');
 		})
 	}
 	
+	function fnReset() {
+		location.href='${contextPath}/admin/room';
+	}
+	
 </script>
 <link rel="stylesheet" href="../resources/css/admin.css">
+<style type="text/css">
+	
+	.type1 {
+		color: red; 
+	}
+	.type2 {
+		color: blue;
+	}
+	.type3 {
+		color: green;
+	}
+
+</style>
 </head>
 <body>
 	
@@ -62,16 +90,22 @@
 						<td>이름</td>
 						<td>타입</td>
 						<td>가격</td>
-						<td>상태</td>
+						<td>
+							<select name="roomStatus" id="roomStatus">
+								<option value="">예약상태</option>
+								<option value="0">예약가능</option>
+								<option value="1">예약불가</option>
+							</select>
+						</td>
 						<td>보기</td>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="rooms">
 					<c:forEach items="${rooms}" var="room" varStatus="vs">
 						<tr>
-							<td>${beginNo - vs.index}</td>
+							<td>${room.roomNo}</td>
 							<td>${room.roomName}</td>
-							<td>${room.roomTypeDTO.rtType}</td>
+							<td class="type${room.roomTypeDTO.rtNo}">${room.roomTypeDTO.rtType}</td>
 							<td>${room.roomPrice}</td>
 							<c:choose>
 								<c:when test="${room.roomStatus eq 0}"><td>예약가능</td></c:when>
@@ -81,7 +115,7 @@
 						</tr>
 					</c:forEach>
 				</tbody>
-				<tfoot>
+				<tfoot id="tfoot">
 					<tr>
 						<td colspan="6">${paging}</td>
 					</tr>
